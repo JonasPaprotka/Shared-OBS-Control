@@ -22,18 +22,31 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
+      - name: Generate package-lock.json
+        run: |
+          echo "Generating package-lock.json if missing..."
+          npm install --package-lock-only
+
       - name: Install Dependencies
-        run: npm install
+        run: |
+          echo "Installing dependencies..."
+          npm install
 
       - name: Build the App
-        run: npm run build
+        run: |
+          echo "Building the application..."
+          npm run build
 
       - name: Package the App
-        run: npm run dist
+        run: |
+          echo "Packaging the application..."
+          npm run dist
 
       - name: Extract Version
         id: extract_version
-        run: echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
+        run: |
+          echo "Extracting version from package.json..."
+          echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
@@ -56,24 +69,19 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm install
+        run: |
+          echo "Installing dependencies..."
+          npm install
 
       - name: Extract Version
         id: extract_version
-        run: echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
-
-      - name: Delete Existing Release and Tag
-        env:
-          GH_TOKEN: ${{ secrets.SECRET_TOKEN }}
         run: |
-          if gh release view "Shared-OBS-Control-v${{ env.VERSION }}" > /dev/null 2>&1; then
-            echo "Deleting existing release for version ${{ env.VERSION }}...";
-            gh release delete "Shared-OBS-Control-v${{ env.VERSION }}" --yes;
-            git tag -d "v${{ env.VERSION }}" || true;
-            git push origin --delete "v${{ env.VERSION }}" || true;
-          fi
+          echo "Extracting version from package.json..."
+          echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
 
       - name: Publish Release
         env:
           GH_TOKEN: ${{ secrets.SECRET_TOKEN }}
-        run: npm run dist -- --publish=always
+        run: |
+          echo "Publishing release for version ${{ env.VERSION }}..."
+          npm run dist -- --publish=always
