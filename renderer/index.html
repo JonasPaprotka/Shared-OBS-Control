@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shared OBS Control</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <!-- Title Bar -->
+  <div class="title-bar">
+    <div class="title-bar-icon-container">
+      <img src="../assets/icons/icon.png" alt="App Icon" class="title-bar-icon" />
+    </div>
+    <div class="title-bar-text-container">
+      <span class="title-bar-text">Shared OBS Control</span>
+    </div>
+    <div class="title-bar-buttons">
+      <button id="minimize" class="title-bar-button">–</button>
+      <button id="close" class="title-bar-button">✕</button>
+    </div>
+  </div>
+
+  <div id="content">
+    <h1>Shared OBS Control</h1>
+    <p>W.I.P.</p>
+  </div>
+
+  <script src="renderer.js"></script>
+  <script>
+    document.getElementById('minimize').addEventListener('click', () => {
+      window.electronAPI.minimize();
+    });
+
+    document.getElementById('close').addEventListener('click', () => {
+      window.electronAPI.close();
+    });
+  </script>
+</body>
+</html>
