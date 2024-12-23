@@ -11,6 +11,8 @@
   "author": "Jonas Paprotka",
   "license": "Apache-2.0",
   "dependencies": {
+    "electron-log": "^5.2.4",
+    "electron-updater": "^6.3.9",
     "obs-websocket-js": "^5.0.6"
   },
   "devDependencies": {
@@ -20,6 +22,7 @@
   "build": {
     "appId": "com.github.jonaspaprotka.shared-obs-control",
     "productName": "Shared OBS Control",
+    "artifactName": "Shared.OBS.Control.Setup.${version}.${ext}",
     "directories": {
       "output": "dist"
     },
@@ -30,17 +33,24 @@
         "repo": "Shared-OBS-Control"
       }
     ],
+    "nsis": {
+      "differentialPackage": false
+    },
     "files": [
       "**/*",
-      "!node_modules/**/*",
       "!dist/**/*",
       "!*.log",
       "!*.md",
       "!*.gitignore",
       "!LICENSE"
     ],
+    "asarUnpack": [
+      "node_modules/electron-updater"
+    ],
     "win": {
-      "target": ["nsis"],
+      "target": [
+        "nsis"
+      ],
       "icon": "assets/icons/icon.ico"
     }
   }
