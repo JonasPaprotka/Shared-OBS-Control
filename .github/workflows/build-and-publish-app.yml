@@ -16,37 +16,32 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Generate package-lock.json
+        run: |
+          if [ ! -f package-lock.json ]; then
+            echo "package-lock.json not found. Generating it..."
+            npm install --package-lock-only
+          else
+            echo "package-lock.json already exists."
+          fi
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22'
-          cache: 'npm'
-
-      - name: Generate package-lock.json
-        run: |
-          echo "Generating package-lock.json if missing..."
-          npm install --package-lock-only
 
       - name: Install Dependencies
-        run: |
-          echo "Installing dependencies..."
-          npm install
+        run: npm install
 
       - name: Build the App
-        run: |
-          echo "Building the application..."
-          npm run build
+        run: npm run build
 
       - name: Package the App
-        run: |
-          echo "Packaging the application..."
-          npm run dist
+        run: npm run dist
 
       - name: Extract Version
         id: extract_version
-        run: |
-          echo "Extracting version from package.json..."
-          echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
+        run: echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
@@ -62,26 +57,28 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Generate package-lock.json
+        run: |
+          if [ ! -f package-lock.json ]; then
+            echo "package-lock.json not found. Generating it..."
+            npm install --package-lock-only
+          else
+            echo "package-lock.json already exists."
+          fi
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22'
-          cache: 'npm'
 
       - name: Install Dependencies
-        run: |
-          echo "Installing dependencies..."
-          npm install
+        run: npm install
 
       - name: Extract Version
         id: extract_version
-        run: |
-          echo "Extracting version from package.json..."
-          echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
+        run: echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
 
       - name: Publish Release
         env:
           GH_TOKEN: ${{ secrets.SECRET_TOKEN }}
-        run: |
-          echo "Publishing release for version ${{ env.VERSION }}..."
-          npm run dist -- --publish=always
+        run: npm run dist -- --publish=always
