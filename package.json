@@ -1,6 +1,7 @@
 {
   "name": "shared-obs-control",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "displayName": "Shared OBS Control",
   "description": "Allows the user to share control of OBS with other users",
   "main": "main.js",
   "scripts": {
@@ -8,15 +9,20 @@
     "build": "electron-builder",
     "dist": "electron-builder --publish=always"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JonasPaprotka/Shared-OBS-Control"
+  },
   "author": "Jonas Paprotka",
   "license": "Apache-2.0",
   "dependencies": {
+    "electron-log": "^5.2.4",
     "electron-updater": "^6.3.9",
     "obs-websocket-js": "^5.0.6"
   },
   "devDependencies": {
-    "electron": "^33.2.1",
-    "electron-builder": "^25.1.8"
+    "electron": "^25.0.0",
+    "electron-builder": "^25.0.0"
   },
   "build": {
     "appId": "com.github.jonaspaprotka.shared-obs-control",
@@ -32,9 +38,6 @@
         "repo": "Shared-OBS-Control"
       }
     ],
-    "nsis": {
-      "differentialPackage": false
-    },
     "files": [
       "**/*",
       "!dist/**/*",
@@ -50,7 +53,26 @@
       "target": [
         "nsis"
       ],
-      "icon": "assets/icons/icon.ico"
+      "icon": "assets/icons/icon.ico",
+      "legalTrademarks": "Jonas Paprotka",
+      "fileAssociations": [],
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "allowToChangeInstallationDirectory": true,
+      "differentialPackage": false,
+      "artifactName": "Shared.OBS.Control.Setup.${version}.${ext}",
+      "installerHeaderIcon": "assets/icons/icon.ico",
+      "oneClick": false,
+      "perMachine": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "menuCategory": false,
+      "shortcutName": "Shared OBS Control"
+    },
+    "extraMetadata": {
+      "ProductName": "Shared OBS Control",
+      "FileDescription": "Shared OBS Control"
     }
   }
 }

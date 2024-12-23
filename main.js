@@ -1,9 +1,14 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const { autoUpdater } = require('electron-updater');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
+const { autoUpdater } = require('electron-updater');
+const log = require('electron-log');
 
 let mainWindow;
-let updateWindow;
+
+// logging
+log.transports.file.resolvePath = () => path.join(app.getPath('userData'), 'logs', 'main.log');
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
 
 function createMainWindow() {
     mainWindow = new BrowserWindow({
@@ -19,44 +24,51 @@ function createMainWindow() {
 
     mainWindow.loadFile('renderer/index.html');
 
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show();
+        mainWindow.focus();
+    });
+
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
 }
 
-function createUpdateWindow() {
-    updateWindow = new BrowserWindow({
-        width: 400,
-        height: 300,
-        resizable: false,
-        frame: false,
-        webPreferences: {
-            contextIsolation: true,
-        },
+app.on('ready', () => {
+    log.info('Application starting...');
+    createMainWindow();
+
+    autoUpdater.checkForUpdates();
+
+    autoUpdater.on('update-available', (info) => {
+        log.info(`Update available: ${info.version}`);
+        mainWindow.webContents.send('update-available', info);
     });
 
-    updateWindow.loadFile('renderer/update.html');
-}
+    autoUpdater.on('download-progress', (progress) => {
+        log.info(`Download progress: ${progress.percent.toFixed(2)}%`);
+        mainWindow.webContents.send('update-progress', progress);
+    });
 
-app.on('ready', () => {
-    if (app.isPackaged) { // Do not update when dev
-        autoUpdater.checkForUpdates();
+    autoUpdater.on('update-downloaded', (info) => {
+        log.info('Update downloaded. Prompting user to install...');
+        const dialogOpts = {
+            type: 'info',
+            buttons: ['Restart', 'Later'],
+            title: 'Application Update',
+            message: `Version ${info.version} is ready to install.`,
+            detail: 'The update will be applied after restarting the application.',
+        };
 
-        autoUpdater.on('update-available', (info) => {
-            if (!updateWindow) createUpdateWindow();
+        dialog.showMessageBox(dialogOpts).then((returnValue) => {
+            if (returnValue.response === 0) autoUpdater.quitAndInstall();
         });
+    });
 
-        autoUpdater.on('update-downloaded', (info) => {
-            autoUpdater.quitAndInstall();
-        });
-
-        autoUpdater.on('error', (error) => {
-            if (updateWindow) updateWindow.close();
-            createMainWindow();
-        });
-    } else {
-        createMainWindow();
-    }
+    autoUpdater.on('error', (err) => {
+        log.error(`Update error: ${err.message}`);
+        mainWindow.webContents.send('update-error', err.message);
+    });
 });
 
 app.on('window-all-closed', () => {
