@@ -21,28 +21,23 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Generate package-lock.json
-        run: |
-          if [ ! -f package-lock.json ]; then
-            echo "package-lock.json not found. Generating it..."
-            npm install --package-lock-only
-          else
-            echo "package-lock.json already exists."
-          fi
-
       - name: Install Dependencies
         run: npm install
 
       - name: Build the App
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          echo "Building the application..."
-          npm run build
+        run: npm run build
 
-      - name: Extract Version
-        id: extract_version
-        run: echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
+      - name: Get Version from package.json
+        id: get_version
+        uses: notiz-dev/github-action-json-property@v0.2.0
+        with:
+          path: 'package.json'
+          prop_path: 'version'
+
+      - name: Set VERSION environment variable
+        run: echo "VERSION=${{ steps.get_version.outputs.prop }}" >> $GITHUB_ENV
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
@@ -69,6 +64,4 @@ jobs:
       - name: Publish Release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          echo "Publishing release for version ${{ env.VERSION }}..."
-          npm run dist -- --publish=always
+        run: npm run dist -- --publish=always
