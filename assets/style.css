@@ -6,81 +6,6 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* TITLE BAR */
-.title-bar {
-    display: grid;
-    grid-template-columns: 40px 1fr 80px;
-    align-items: center;
-
-    background-color: #121212;
-    height: 40px;
-
-    -webkit-app-region: drag;
-    user-select: none;
-}
-
-#titlebar {
-    width: 100%;
-    height: 40px;
-    border: none;
-    display: block;
-}
-
-.title-bar-icon-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    -webkit-app-region: no-drag;
-}
-
-.title-bar-icon {
-    width: 24px;
-    height: 24px;
-}
-
-.title-bar-text-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.title-bar-text {
-    font-size: 16px;
-}
-
-.title-bar-buttons {
-    display: flex;
-    justify-content: flex-end; 
-    align-items: center;
-    -webkit-app-region: no-drag;
-    gap: 5px;
-}
-
-.title-bar-button {
-    background: transparent;
-    border: none;
-    color: #ffffff;
-    font-size: 18px;
-    width: 40px;
-    height: 30px;
-    cursor: pointer;
-    text-align: center;
-    line-height: 30px;
-    border-radius: 4px;
-}
-
-.title-bar-button:hover {
-    background-color: #444;
-}
-
-#close:hover {
-    background-color: #e81123;
-}
-
-#iframe {
-    display: block;
-}
-
 #content {
     padding: 20px;
     text-align: center;
@@ -95,4 +20,29 @@ h1 {
 p {
     font-size: 16px;
     margin-bottom: 20px;
+}
+
+.button-container {
+    display: flex;
+    gap: 20px;
+}
+
+.control-button {
+    padding: 15px 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+    background-color: #4a4a4a;
+    color: white;
+}
+
+.control-button:hover {
+    transform: translateY(-2px);
+    background-color: #666;
+}
+
+.control-button:active {
+    transform: translateY(0);
 }
