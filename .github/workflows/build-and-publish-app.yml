@@ -16,6 +16,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
       - name: Generate package-lock.json
         run: |
           if [ ! -f package-lock.json ]; then
@@ -25,19 +30,15 @@ jobs:
             echo "package-lock.json already exists."
           fi
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22'
-
       - name: Install Dependencies
         run: npm install
 
       - name: Build the App
-        run: npm run build
-
-      - name: Package the App
-        run: npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          echo "Building the application..."
+          npm run build
 
       - name: Extract Version
         id: extract_version
@@ -57,15 +58,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Generate package-lock.json
-        run: |
-          if [ ! -f package-lock.json ]; then
-            echo "package-lock.json not found. Generating it..."
-            npm install --package-lock-only
-          else
-            echo "package-lock.json already exists."
-          fi
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -74,11 +66,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Extract Version
-        id: extract_version
-        run: echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
-
       - name: Publish Release
         env:
-          GH_TOKEN: ${{ secrets.SECRET_TOKEN }}
-        run: npm run dist -- --publish=always
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          echo "Publishing release for version ${{ env.VERSION }}..."
+          npm run dist -- --publish=always
