@@ -1,0 +1,43 @@
+name: Build and Publish App Win
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4.1.0
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        shell: powershell
+        run: |
+          npm install -g yarn
+          yarn install
+
+      - name: Build Windows Installer
+        shell: powershell
+        run: |
+          yarn run dist
+
+      - name: Check file size
+        run: |
+          Get-ChildItem -Path dist/*.exe | ForEach-Object { Write-Host "$($_.Name): $($_.Length / 1MB) MB" }
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.exe
+          token: ${{ secrets.GH_TOKEN }}
