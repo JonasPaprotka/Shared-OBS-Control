@@ -40,4 +40,5 @@ jobs:
         with:
           files: |
             dist/*.exe
+            dist/latest.yml
           token: ${{ secrets.GH_TOKEN }}
