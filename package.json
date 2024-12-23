@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "dist": "electron-builder --publish=always"
   },
   "author": "Jonas Paprotka",
   "license": "Apache-2.0",
