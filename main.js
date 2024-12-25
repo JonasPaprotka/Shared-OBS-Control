@@ -6,10 +6,10 @@ let mainWindow;
 
 function createMainWindow() {
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        minWidth: 600,
-        minHeight: 400,
+        width: 1200,
+        height: 675,
+        minWidth: 400,
+        minHeight: 225,
         roundedCorners: true,
         frame: false,
         icon: path.join(__dirname, 'assets', 'icons', 'icon.ico'),
