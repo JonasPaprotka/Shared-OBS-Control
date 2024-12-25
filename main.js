@@ -25,6 +25,9 @@ function initI18next(userLocale) {
       preload: preloadLanguages,
       supportedLngs: ['en', 'de', 'cs', 'es', 'fr', 'it', 'ja', 'pl', 'pt', 'ru'],
       debug: false,
+      interpolation: {
+        escapeValue: false
+      }
     });
 }
 
@@ -76,22 +79,34 @@ app.on('ready', () => {
         mainWindow.webContents.send('update-progress', progress);
       });
 
-      autoUpdater.on('update-downloaded', (info) => {
-        const dialogOpts = {
-          type: 'info',
-          buttons: ['Restart', 'Later'],
-          title: 'Application Update',
-          message: `Version ${info.version} is ready to install.`,
-          detail: 'The update will be applied after restarting the application.',
-        };
+      autoUpdater.on('update-downloaded', async (info) => {
+        try {
+          const title = i18next.t('update_dialog_title', { lng: userLocale });
+          const message = i18next.t('update_dialog_message', { lng: userLocale, version: info.version });
+          const detail = i18next.t('update_dialog_detail', { lng: userLocale });
+          const buttons = [
+            i18next.t('update_dialog_button_restart', { lng: userLocale }),
+            i18next.t('update_dialog_button_later', { lng: userLocale })
+          ];
 
-        dialog.showMessageBox(dialogOpts).then((returnValue) => {
+          const dialogOpts = {
+            type: 'info',
+            buttons: buttons,
+            title: title,
+            message: message,
+            detail: detail,
+          };
+
+          const returnValue = await dialog.showMessageBox(dialogOpts);
           if (returnValue.response === 0) autoUpdater.quitAndInstall();
-        });
+        } catch (err) {
+          console.error('Error showing update dialog:', err);
+        }
       });
 
       autoUpdater.on('error', (err) => {
-        mainWindow.webContents.send('update-error', err.message);
+        const errorMessage = i18next.t('update_error_message', { lng: userLocale }) || err.message;
+        mainWindow.webContents.send('update-error', errorMessage);
       });
     })
     .catch((err) => {
@@ -117,11 +132,11 @@ ipcMain.on('window-close', (event) => {
 });
 
 ipcMain.handle('translate', (event, { key, lng }) => {
-  const translator = i18next.getFixedT(lng);
-  const result = translator(key);
-  return result;
-});
-
+    const translator = i18next.getFixedT(lng);
+    const result = translator(key);
+    return result;
+  });
+  
 ipcMain.handle('get-resource-bundle', (event, lng) => {
-  return i18next.getResourceBundle(lng, 'translation');
+    return i18next.getResourceBundle(lng, 'translation');
 });
