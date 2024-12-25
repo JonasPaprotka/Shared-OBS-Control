@@ -12,3 +12,10 @@
 - Better installer
 - Added update logging
 
+## v0.1.0
+
+- Added Tailwindcss
+- Reworked UI
+- Removed update logging
+- Allows window resizing
+

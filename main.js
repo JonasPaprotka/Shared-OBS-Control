@@ -1,19 +1,16 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const { autoUpdater } = require('electron-updater');
-const log = require('electron-log');
 
 let mainWindow;
-
-// logging
-log.transports.file.resolvePath = () => path.join(app.getPath('userData'), 'logs', 'main.log');
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
 
 function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
+        minWidth: 600,
+        minHeight: 400,
+        roundedCorners: true,
         frame: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -35,23 +32,19 @@ function createMainWindow() {
 }
 
 app.on('ready', () => {
-    log.info('Application starting...');
     createMainWindow();
 
     autoUpdater.checkForUpdates();
 
     autoUpdater.on('update-available', (info) => {
-        log.info(`Update available: ${info.version}`);
         mainWindow.webContents.send('update-available', info);
     });
 
     autoUpdater.on('download-progress', (progress) => {
-        log.info(`Download progress: ${progress.percent.toFixed(2)}%`);
         mainWindow.webContents.send('update-progress', progress);
     });
 
     autoUpdater.on('update-downloaded', (info) => {
-        log.info('Update downloaded. Prompting user to install...');
         const dialogOpts = {
             type: 'info',
             buttons: ['Restart', 'Later'],
@@ -66,7 +59,6 @@ app.on('ready', () => {
     });
 
     autoUpdater.on('error', (err) => {
-        log.error(`Update error: ${err.message}`);
         mainWindow.webContents.send('update-error', err.message);
     });
 });

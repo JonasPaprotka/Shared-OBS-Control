@@ -1,12 +1,27 @@
-<div class="title-bar">
-    <div class="title-bar-icon-container">
-      <img src="../assets/icons/icon.png" alt="App Icon" class="title-bar-icon" />
-    </div>
-    <div class="title-bar-text-container">
-      <span class="title-bar-text">Shared OBS Control</span>
-    </div>
-    <div class="title-bar-buttons">
-      <button id="minimize" class="title-bar-button">–</button>
-      <button id="close" class="title-bar-button">✕</button>
-    </div>
+<div class="bg-slate-800 grid grid-cols-3 items-center h-10" style="-webkit-app-region: drag;">
+  <!-- Icon -->
+  <div class="p-2">
+    <img src="../assets/icons/icon.png" alt="Icon" class="w-6 h-6" style="-webkit-app-region: no-drag;" />
+  </div>
+
+  <!-- Title -->
+  <div class="flex items-center justify-center">
+    <span class="text-white font-semibold">Shared OBS Control</span>
+  </div>
+
+  <!-- Window Buttons -->
+  <div class="flex items-center justify-end space-x-0" style="height: 100%;">
+    <button
+      id="minimize"
+      class="text-white font-semibold hover:bg-slate-900 w-10 h-full flex items-center justify-center"
+      style="-webkit-app-region: no-drag;">
+      –
+    </button>
+    <button
+      id="close"
+      class="text-white font-semibold hover:bg-red-900 w-10 h-full flex items-center justify-center"
+      style="-webkit-app-region: no-drag;">
+      ✕
+    </button>
+  </div>
 </div>
