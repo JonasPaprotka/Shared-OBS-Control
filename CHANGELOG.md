@@ -18,4 +18,4 @@
 - Reworked UI
 - Removed update logging
 - Allows window resizing
-
+- Added i18n
