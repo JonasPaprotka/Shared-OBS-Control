@@ -1,4 +1,9 @@
 {
   "share_obs_control": "Share OBS Control",
-  "control_obs": "Control OBS"
+  "control_obs": "Control OBS",
+  "update_dialog_title": "App Update",
+  "update_dialog_message": "Version {{version}} is ready to install.",
+  "update_dialog_detail": "The update will be applied after restarting the application.",
+  "update_dialog_button_restart": "Restart",
+  "update_dialog_button_later": "Later"
 }
