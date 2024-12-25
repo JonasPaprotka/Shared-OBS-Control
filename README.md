@@ -1,5 +1,7 @@
 # [W.I.P.] Shared-OBS-Control
 
+[![Crowdin](https://badges.crowdin.net/shared-obs-control/localized.svg)](https://crowdin.com/project/shared-obs-control)
+
 ## Introduction
 
 Allows the user to share control of OBS with other users.
