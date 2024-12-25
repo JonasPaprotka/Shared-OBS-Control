@@ -1,4 +1,4 @@
 files:
   - source: '/locales/source/*.json'
     translation: '/locales/%two_letters_code%/%original_file_name%'
-    export_empty_as: empty
+    export_empty_as: hidden
