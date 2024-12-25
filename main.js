@@ -8,8 +8,8 @@ function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 675,
-        minWidth: 400,
-        minHeight: 225,
+        minWidth: 1200,
+        minHeight: 675,
         roundedCorners: true,
         frame: false,
         icon: path.join(__dirname, 'assets', 'icons', 'icon.ico'),
