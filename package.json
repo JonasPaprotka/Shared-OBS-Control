@@ -1,12 +1,13 @@
 {
   "name": "shared-obs-control",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "displayName": "Shared OBS Control",
   "description": "Allows the user to share control of OBS with other users",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "build": "electron-builder",
+    "tailwindcss": "npx tailwindcss -i ./renderer/input.css -o ./renderer/output.css --watch",
     "dist": "electron-builder --publish=always"
   },
   "repository": {
@@ -16,13 +17,15 @@
   "author": "Jonas Paprotka",
   "license": "Apache-2.0",
   "dependencies": {
-    "electron-log": "^5.2.4",
     "electron-updater": "^6.3.9",
+    "i18next": "^24.2.0",
+    "i18next-fs-backend": "^2.6.0",
     "obs-websocket-js": "^5.0.6"
   },
   "devDependencies": {
-    "electron": "^25.0.0",
-    "electron-builder": "^25.0.0"
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "tailwindcss": "^3.4.17"
   },
   "build": {
     "appId": "com.github.jonaspaprotka.shared-obs-control",
