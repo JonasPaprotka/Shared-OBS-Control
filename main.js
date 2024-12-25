@@ -4,10 +4,31 @@ const { autoUpdater } = require('electron-updater');
 const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
 
-const userLocale = app.getLocaleCountryCode();
 let mainWindow;
 
-function createMainWindow() {
+function initI18next(userLocale) {
+  const normalizedLocale = userLocale.toLowerCase();
+
+  const preloadLanguages = ['en'];
+  if (normalizedLocale && normalizedLocale !== 'en') {
+    preloadLanguages.push(normalizedLocale);
+  }
+
+  return i18next
+    .use(Backend)
+    .init({
+      backend: {
+        loadPath: path.join(__dirname, 'locales', '{{lng}}', 'ui.json'),
+      },
+      lng: 'en', // default language
+      fallbackLng: 'en',
+      preload: preloadLanguages,
+      supportedLngs: ['en', 'de', 'cs', 'es', 'fr', 'it', 'ja', 'pl', 'pt', 'ru'],
+      debug: false,
+    });
+}
+
+function createMainWindow(appLocale) {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 675,
@@ -20,7 +41,8 @@ function createMainWindow() {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      additionalArguments: [`--user-locale=${userLocale}`]
+      sandbox: true,
+      additionalArguments: [`--user-locale=${appLocale}`],
     },
   });
 
@@ -36,22 +58,13 @@ function createMainWindow() {
   });
 }
 
-function initI18next() {
-  return i18next
-    .use(Backend)
-    .init({
-      backend: {
-        loadPath: path.join(__dirname, 'locales', '{{lng}}', 'ui.json'),
-      },
-      lng: 'en', // default language
-      fallbackLng: 'en',
-    });
-}
-
 app.on('ready', () => {
-  initI18next()
+  let userLocale = app.getLocaleCountryCode() || 'en';
+  userLocale = userLocale.toLowerCase();
+
+  initI18next(userLocale)
     .then(() => {
-      createMainWindow();
+      createMainWindow(userLocale);
 
       autoUpdater.checkForUpdates();
 
@@ -105,7 +118,8 @@ ipcMain.on('window-close', (event) => {
 
 ipcMain.handle('translate', (event, { key, lng }) => {
   const translator = i18next.getFixedT(lng);
-  return translator(key);
+  const result = translator(key);
+  return result;
 });
 
 ipcMain.handle('get-resource-bundle', (event, lng) => {

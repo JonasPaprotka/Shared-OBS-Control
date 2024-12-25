@@ -22,17 +22,20 @@ fetch('titlebar.html')
 
 
 // language
-window.onload = async () => {
-const detectedLocale = window.electronAPI.getDetectedLocale() || '';
-const defaultLanguage = detectedLocale.trim() === '' ? 'en' : detectedLocale;
-const elements = document.querySelectorAll('[data-lang]');
-for (const element of elements) {
-  const key = element.getAttribute('data-lang');
-  try {
-    const translatedText = await window.electronAPI.translate(defaultLanguage, key);
-    element.textContent = translatedText;
-  } catch (err) {
-    console.error(`Translation error for key "${key}" in language "${defaultLanguage}":`, err);
+document.addEventListener('DOMContentLoaded', async () => {
+  
+  let detectedLocale = window.electronAPI.getDetectedLocale() || '';
+  let defaultLanguage = detectedLocale.trim() === '' ? 'en' : detectedLocale;
+  defaultLanguage = defaultLanguage.toLowerCase();
+  const elements = document.querySelectorAll('[data-lang]');
+
+  for (const element of elements) {
+    const key = element.getAttribute('data-lang');
+    try {
+      const translatedText = await window.electronAPI.translate(defaultLanguage, key);
+      element.textContent = translatedText;
+    } catch (err) {
+      console.error(`Translation error for key "${key}" in language "${defaultLanguage}":`, err);
+    }
   }
-}
-};
+});
