@@ -12,10 +12,12 @@
 - Better installer
 - Added update logging
 
-## v0.1.0
+## v0.0.3
 
-- Added Tailwindcss
+- Final preparations before first functional release
+- Switched to Tailwind CSS
 - Reworked UI
 - Removed update logging
 - Allows window resizing
-- Added i18n
+- Added i18n language support
+
