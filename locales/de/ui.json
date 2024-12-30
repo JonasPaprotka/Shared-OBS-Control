@@ -1,9 +1,0 @@
-{
-  "share_obs_control": "OBS Kontrolle teilen",
-  "control_obs": "OBS steuern",
-  "update_dialog_title": "App Aktualisierung",
-  "update_dialog_message": "Version {{version}} ist bereit zur Installation.",
-  "update_dialog_detail": "Das Update wird nach einem Neustart der Anwendung angewendet.",
-  "update_dialog_button_restart": "Neustarten",
-  "update_dialog_button_later": "Später"
-}
