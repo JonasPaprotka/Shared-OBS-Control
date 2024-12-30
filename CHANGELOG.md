@@ -26,3 +26,7 @@
 - Added script to automatically update the source translation
 - Switched from two-letter locale codes to four-letter locale codes
 - Final preparations before the first functional release
+
+## v0.1.0
+
+- 
