@@ -3,12 +3,15 @@ const path = require('path');
 const { autoUpdater } = require('electron-updater');
 const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
+const fs = require('fs');
 
 let mainWindow;
 
 function initI18next(userLocale) {
-  const preloadLanguages = ['en-US'];
-  if (userLocale !== 'en-US') {
+  const defaultLanguage = 'en-US';
+  const preloadLanguages = [defaultLanguage];
+
+  if (userLocale !== defaultLanguage) {
     preloadLanguages.push(userLocale);
   }
 
@@ -18,19 +21,29 @@ function initI18next(userLocale) {
       backend: {
         loadPath: path.join(__dirname, 'locales', '{{lng}}', 'ui.json'),
       },
-      lng: userLocale || 'en-US',
-      fallbackLng: 'en-US',
+      lng: userLocale || defaultLanguage,
+      fallbackLng: defaultLanguage,
       preload: preloadLanguages,
-      supportedLngs: ['en-US', 'de-DE', 'cs-CZ', 'es-ES', 'fr-FR', 'it-IT', 'ja-JP', 'pl-PL', 'pt-PT', 'ru-RU'],
-      debug: true,
+      supportedLngs: getSupportedLngs(),
+      debug: false,
       interpolation: {
         escapeValue: false
       }
     });
 }
 
-function getUserLocale() {
+function getLocaleCode() {
   return Intl.DateTimeFormat().resolvedOptions().locale;
+}
+
+function getSupportedLngs() {
+  const lngPath = path.join(__dirname, 'locales')
+  const lngs = fs.readdirSync(lngPath, { withFileTypes: true });
+  const supportedLngs = lngs
+      .filter(entry => entry.isDirectory())
+      .map(entry => entry.name);
+
+  return supportedLngs;
 }
 
 function createMainWindow(appLocale) {
@@ -64,11 +77,11 @@ function createMainWindow(appLocale) {
 }
 
 app.on('ready', () => {
-  let userLocale = getUserLocale();
+  const localeCode = getLocaleCode();
 
-  initI18next(userLocale)
+  initI18next(localeCode)
     .then(() => {
-      createMainWindow(userLocale);
+      createMainWindow(localeCode);
 
       autoUpdater.checkForUpdates();
 
