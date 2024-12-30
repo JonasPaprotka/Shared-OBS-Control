@@ -7,11 +7,9 @@ const Backend = require('i18next-fs-backend');
 let mainWindow;
 
 function initI18next(userLocale) {
-  const normalizedLocale = userLocale.toLowerCase();
-
-  const preloadLanguages = ['en'];
-  if (normalizedLocale && normalizedLocale !== 'en') {
-    preloadLanguages.push(normalizedLocale);
+  const preloadLanguages = ['en-US'];
+  if (userLocale !== 'en-US') {
+    preloadLanguages.push(userLocale);
   }
 
   return i18next
@@ -20,15 +18,19 @@ function initI18next(userLocale) {
       backend: {
         loadPath: path.join(__dirname, 'locales', '{{lng}}', 'ui.json'),
       },
-      lng: 'en', // default language
-      fallbackLng: 'en',
+      lng: userLocale || 'en-US',
+      fallbackLng: 'en-US',
       preload: preloadLanguages,
-      supportedLngs: ['en', 'de', 'cs', 'es', 'fr', 'it', 'ja', 'pl', 'pt', 'ru'],
-      debug: false,
+      supportedLngs: ['en-US', 'de-DE', 'cs-CZ', 'es-ES', 'fr-FR', 'it-IT', 'ja-JP', 'pl-PL', 'pt-PT', 'ru-RU'],
+      debug: true,
       interpolation: {
         escapeValue: false
       }
     });
+}
+
+function getUserLocale() {
+  return Intl.DateTimeFormat().resolvedOptions().locale;
 }
 
 function createMainWindow(appLocale) {
@@ -62,8 +64,7 @@ function createMainWindow(appLocale) {
 }
 
 app.on('ready', () => {
-  let userLocale = app.getLocaleCountryCode() || 'en';
-  userLocale = userLocale.toLowerCase();
+  let userLocale = getUserLocale();
 
   initI18next(userLocale)
     .then(() => {
@@ -81,12 +82,12 @@ app.on('ready', () => {
 
       autoUpdater.on('update-downloaded', async (info) => {
         try {
-          const title = i18next.t('update_dialog_title', { lng: userLocale });
-          const message = i18next.t('update_dialog_message', { lng: userLocale, version: info.version });
-          const detail = i18next.t('update_dialog_detail', { lng: userLocale });
+          const title = i18next.t('update_dialog_title');
+          const message = i18next.t('update_dialog_message', { version: info.version });
+          const detail = i18next.t('update_dialog_detail');
           const buttons = [
-            i18next.t('update_dialog_button_restart', { lng: userLocale }),
-            i18next.t('update_dialog_button_later', { lng: userLocale })
+            i18next.t('update_dialog_button_restart'),
+            i18next.t('update_dialog_button_later')
           ];
 
           const dialogOpts = {
@@ -105,7 +106,7 @@ app.on('ready', () => {
       });
 
       autoUpdater.on('error', (err) => {
-        const errorMessage = i18next.t('update_error_message', { lng: userLocale }) || err.message;
+        const errorMessage = i18next.t('update_error_message') || err.message;
         mainWindow.webContents.send('update-error', errorMessage);
       });
     })
@@ -131,12 +132,11 @@ ipcMain.on('window-close', (event) => {
   if (window) window.close();
 });
 
-ipcMain.handle('translate', (event, { key, lng }) => {
-    const translator = i18next.getFixedT(lng);
-    const result = translator(key);
-    return result;
-  });
-  
+ipcMain.handle('translate', (event, { key }) => {
+  const result = i18next.t(key);
+  return result;
+});
+
 ipcMain.handle('get-resource-bundle', (event, lng) => {
-    return i18next.getResourceBundle(lng, 'translation');
+  return i18next.getResourceBundle(lng, 'translation');
 });

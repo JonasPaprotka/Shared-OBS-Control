@@ -21,3 +21,6 @@
 - Allows window resizing
 - Added i18n language support
 
+## v0.1.0
+
+- 
