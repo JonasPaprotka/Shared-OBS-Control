@@ -14,10 +14,15 @@
 
 ## v0.0.3
 
-- Final preparations before first functional release
 - Switched to Tailwind CSS
 - Reworked UI
 - Removed update logging
 - Allows window resizing
 - Added i18n language support
 
+## v0.0.4
+
+- General Improvements
+- Added script to automatically update the source translation
+- Switched from two-letter locale codes to four-letter locale codes
+- Final preparations before the first functional release

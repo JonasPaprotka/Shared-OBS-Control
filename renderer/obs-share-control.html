@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Host OBS Control</title>
+  <link rel="stylesheet" href="output.css" />
+  <link rel="stylesheet" href="restrictions.css" />
+</head>
+<body class="bg-slate-800 text-white font-sans">
+  <!-- Title Bar -->
+  <div id="titlebar-container"></div>
+
+  <!-- New Session -->
+  <div class="flex justify-center mt-6">
+    <button id="create-session-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition" data-lang="create_new_session">
+      Create New Session
+    </button>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

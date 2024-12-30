@@ -3,15 +3,16 @@ const path = require('path');
 const { autoUpdater } = require('electron-updater');
 const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
+const fs = require('fs');
 
 let mainWindow;
 
 function initI18next(userLocale) {
-  const normalizedLocale = userLocale.toLowerCase();
+  const defaultLanguage = 'en-US';
+  const preloadLanguages = [defaultLanguage];
 
-  const preloadLanguages = ['en'];
-  if (normalizedLocale && normalizedLocale !== 'en') {
-    preloadLanguages.push(normalizedLocale);
+  if (userLocale !== defaultLanguage) {
+    preloadLanguages.push(userLocale);
   }
 
   return i18next
@@ -20,15 +21,29 @@ function initI18next(userLocale) {
       backend: {
         loadPath: path.join(__dirname, 'locales', '{{lng}}', 'ui.json'),
       },
-      lng: 'en', // default language
-      fallbackLng: 'en',
+      lng: userLocale || defaultLanguage,
+      fallbackLng: defaultLanguage,
       preload: preloadLanguages,
-      supportedLngs: ['en', 'de', 'cs', 'es', 'fr', 'it', 'ja', 'pl', 'pt', 'ru'],
+      supportedLngs: getSupportedLngs(),
       debug: false,
       interpolation: {
         escapeValue: false
       }
     });
+}
+
+function getLocaleCode() {
+  return Intl.DateTimeFormat().resolvedOptions().locale;
+}
+
+function getSupportedLngs() {
+  const lngPath = path.join(__dirname, 'locales')
+  const lngs = fs.readdirSync(lngPath, { withFileTypes: true });
+  const supportedLngs = lngs
+      .filter(entry => entry.isDirectory())
+      .map(entry => entry.name);
+
+  return supportedLngs;
 }
 
 function createMainWindow(appLocale) {
@@ -62,12 +77,11 @@ function createMainWindow(appLocale) {
 }
 
 app.on('ready', () => {
-  let userLocale = app.getLocaleCountryCode() || 'en';
-  userLocale = userLocale.toLowerCase();
+  const localeCode = getLocaleCode();
 
-  initI18next(userLocale)
+  initI18next(localeCode)
     .then(() => {
-      createMainWindow(userLocale);
+      createMainWindow(localeCode);
 
       autoUpdater.checkForUpdates();
 
@@ -81,12 +95,12 @@ app.on('ready', () => {
 
       autoUpdater.on('update-downloaded', async (info) => {
         try {
-          const title = i18next.t('update_dialog_title', { lng: userLocale });
-          const message = i18next.t('update_dialog_message', { lng: userLocale, version: info.version });
-          const detail = i18next.t('update_dialog_detail', { lng: userLocale });
+          const title = i18next.t('update_dialog_title');
+          const message = i18next.t('update_dialog_message', { version: info.version });
+          const detail = i18next.t('update_dialog_detail');
           const buttons = [
-            i18next.t('update_dialog_button_restart', { lng: userLocale }),
-            i18next.t('update_dialog_button_later', { lng: userLocale })
+            i18next.t('update_dialog_button_restart'),
+            i18next.t('update_dialog_button_later')
           ];
 
           const dialogOpts = {
@@ -105,7 +119,7 @@ app.on('ready', () => {
       });
 
       autoUpdater.on('error', (err) => {
-        const errorMessage = i18next.t('update_error_message', { lng: userLocale }) || err.message;
+        const errorMessage = i18next.t('update_error_message') || err.message;
         mainWindow.webContents.send('update-error', errorMessage);
       });
     })
@@ -131,12 +145,11 @@ ipcMain.on('window-close', (event) => {
   if (window) window.close();
 });
 
-ipcMain.handle('translate', (event, { key, lng }) => {
-    const translator = i18next.getFixedT(lng);
-    const result = translator(key);
-    return result;
-  });
-  
+ipcMain.handle('translate', (event, { key }) => {
+  const result = i18next.t(key);
+  return result;
+});
+
 ipcMain.handle('get-resource-bundle', (event, lng) => {
-    return i18next.getResourceBundle(lng, 'translation');
+  return i18next.getResourceBundle(lng, 'translation');
 });
