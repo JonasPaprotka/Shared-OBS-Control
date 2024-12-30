@@ -5,5 +5,14 @@
   "update_dialog_message": "Version {{version}} ist bereit zur Installation.",
   "update_dialog_detail": "Das Update wird nach einem Neustart der Anwendung angewendet.",
   "update_dialog_button_restart": "Neustarten",
-  "update_dialog_button_later": "Später"
+  "update_dialog_button_later": "Später",
+  "update_error_message": "An error occurred while updating the application.",
+  "create_new_session": "Create New Session",
+  "session_details": "Session Details",
+  "session_id": "Session ID:",
+  "copy": "Copy",
+  "password": "Password:",
+  "connected_users": "Connected Users:",
+  "no_users_connected": "No users connected.",
+  "join_session": "Join Session"
 }
