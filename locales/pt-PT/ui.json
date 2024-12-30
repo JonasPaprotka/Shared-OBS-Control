@@ -1,1 +1,18 @@
-{}
+{
+  "share_obs_control": "Share OBS Control",
+  "control_obs": "Control OBS",
+  "update_dialog_title": "App Update",
+  "update_dialog_message": "Version {{version}} is ready to install.",
+  "update_dialog_detail": "The update will be applied after restarting the application.",
+  "update_dialog_button_restart": "Restart",
+  "update_dialog_button_later": "Later",
+  "update_error_message": "An error occurred while updating the application.",
+  "create_new_session": "Create New Session",
+  "session_details": "Session Details",
+  "session_id": "Session ID:",
+  "copy": "Copy",
+  "password": "Password:",
+  "connected_users": "Connected Users:",
+  "no_users_connected": "No users connected.",
+  "join_session": "Join Session"
+}
