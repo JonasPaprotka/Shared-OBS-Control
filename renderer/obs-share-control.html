@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Host OBS Control</title>
   <link rel="stylesheet" href="output.css" />
   <link rel="stylesheet" href="restrictions.css" />
@@ -13,11 +13,36 @@
 
   <!-- New Session -->
   <div class="flex justify-center mt-6">
-    <button id="create-session-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition" data-lang="create_new_session">
-      Create New Session
-    </button>
+    <button id="create-session-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition">Create New Session</button>
+  </div>
+
+  <!-- Session Info -->
+  <div id="session-info" class="max-w-xl mx-auto bg-slate-700 p-6 mt-4 rounded shadow-md hidden">
+    <h2 class="text-xl font-bold mb-4">Session Info</h2>
+    
+    <div class="mb-2">
+      <strong>Encrypted Token:</strong> 
+      <span id="session-token-text" class="ml-2 break-all"></span>
+    </div>
+    
+    <div class="mb-2">
+      <strong>Password:</strong> 
+      <span id="session-password-text" class="ml-2 break-all"></span>
+    </div>
+
+    <div class="mb-2">
+      <strong>Status:</strong>
+      <span id="host-status-text" class="ml-2"></span>
+    </div>
+  </div>
+
+  <!-- Logs -->
+  <div class="max-w-xl mx-auto bg-slate-700 p-6 mt-4 rounded shadow-md">
+    <h2 class="text-xl font-bold mb-4">Host Logs</h2>
+    <div id="host-logs" class="h-60 overflow-y-auto bg-slate-800 p-2 rounded text-sm"></div>
   </div>
 
   <script src="renderer.js"></script>
+  <script src="session_mgt/host.js"></script>
 </body>
 </html>

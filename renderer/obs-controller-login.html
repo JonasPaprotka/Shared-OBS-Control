@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Join OBS Control</title>
   <link rel="stylesheet" href="output.css" />
   <link rel="stylesheet" href="restrictions.css" />
@@ -13,20 +13,40 @@
 
   <!-- Join Session -->
   <div id="join-form" class="max-w-md mx-auto bg-slate-700 p-6 rounded shadow-lg mt-6">
-    <h2 class="text-xl font-bold mb-4" data-lang="join_session">Join Session</h2>
-    <label for="session-id" class="block font-semibold mb-2" data-lang="session_id">Session ID:</label>
-    <input type="text" id="session-id" required class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-    <label for="session-password" class="block font-semibold mb-2" data-lang="password">Password:</label>
-    <input type="password" id="session-password" required class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <h2 class="text-xl font-bold mb-4">Join Session</h2>
+    <label for="session-token" class="block font-semibold mb-2">Encrypted Token:</label>
+    <input type="text" id="session-token" placeholder="Paste the host’s token" required class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded"/>
+    <label for="session-password" class="block font-semibold mb-2">Password:</label>
+    <input type="text" id="session-password" placeholder="Paste the host’s password" required class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded"/>
 
     <div class="text-center">
-      <button id="join-session-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition" data-lang="join_session">
-        Join Session
-      </button>
+      <button id="join-session-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition">Join Session</button>
     </div>
   </div>
 
+  <!-- TESTING -->
+  <div id="action-area" class="max-w-md mx-auto bg-slate-700 p-6 rounded shadow-lg mt-6 hidden">
+    <h2 class="text-xl font-bold mb-4">Client Actions</h2>
+    <label for="action-select" class="block font-semibold mb-2">Choose an Action:</label>
+    <select id="action-select" class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded focus:outline-none">
+      <option value="">-- Select Action --</option>
+      <option value="GetVersion">GetVersion</option>
+      <option value="TestConnection">TestConnection</option>
+      <option value="SomeCustomAction">SomeCustomAction</option>
+    </select>
+
+    <div class="text-center">
+      <button id="send-action-btn" class="px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition">Send Action</button>
+    </div>
+  </div>
+
+  <!-- Logs -->
+  <div class="max-w-md mx-auto bg-slate-700 p-6 rounded shadow-lg mt-6">
+    <h2 class="text-xl font-bold mb-4">Client Logs</h2>
+    <div id="client-logs" class="h-60 overflow-y-auto bg-slate-800 p-2 rounded text-sm"></div>
+  </div>
+
   <script src="renderer.js"></script>
+  <script src="session_mgt/client.js"></script>
 </body>
 </html>
