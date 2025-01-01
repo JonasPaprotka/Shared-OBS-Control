@@ -51,26 +51,36 @@ async function joinSession() {
 
     ws.addEventListener('open', () => {
       logClient('Session open. Authenticating...');
-      ws.send(JSON.stringify({
-        type: 'authenticate',
-        encryptedToken: sessionToken,
-        password: sessionPassword,
-        role: 'client',
-      }));
+      ws.send(
+        JSON.stringify({
+          type: 'authenticate',
+          encryptedToken: sessionToken,
+          password: sessionPassword,
+          role: 'client',
+        })
+      );
     });
 
     ws.addEventListener('message', (event) => {
       try {
         const msg = JSON.parse(event.data);
 
+        window.actionAPI.handleActionMessage(msg, {
+          onResponse: (action, payload) => {
+            logClient(`Response - [${action}]: ${JSON.stringify(payload)}`);
+          },
+          onError: (error) => {
+            logClient(`Server error: ${error}`);
+          },
+          onAction: (action, payload) => {
+            //TODO
+          },
+        });
+
         if (msg.type === 'authenticated') {
           logClient('Successfully authenticated!');
           if (obsController) obsController.classList.remove('hidden');
           if (actionArea) actionArea.classList.remove('hidden');
-        } else if (msg.type === 'response') {
-          logClient(`Response - [${msg.action}]: ${JSON.stringify(msg.payload)}`);
-        } else if (msg.type === 'error') {
-          logClient(`Server error: ${msg.error || msg.message}`);
         }
       } catch (err) {
         logClient(`Parsing error: ${err.message}`);
@@ -79,31 +89,31 @@ async function joinSession() {
 
     ws.addEventListener('close', () => {
       if (obsController) obsController.classList.add('hidden');
+      logClient('Connection closed.');
     });
 
     ws.addEventListener('error', (err) => {
       logClient(`Session error: ${err.message}`);
     });
-
   } catch (err) {
     logClient(`Error joining session: ${err.message}`);
   }
 }
 
-function sendAction(action) {
-  if (!isConnected()) {
-    return;
+function sendSelectedAction(selectedAction) {
+  let payload = {};
+
+  if (selectedAction === 'SwitchToScene') {
+    const sceneName = prompt('Enter the scene name:');
+    if (!sceneName) {
+      logClient('Scene name is required');
+      return;
+    }
+    payload.sceneName = sceneName;
   }
 
-  if (!action) {
-    return;
-  }
-
-  ws.send(JSON.stringify({
-    type: 'request',
-    action: selectedAction,
-    payload: {}
-  }));
+  window.actionAPI.sendAction(selectedAction, payload);
+  logClient(`Sent action: ${selectedAction} with payload: ${JSON.stringify(payload)}`);
 }
 
 function isConnected() {
@@ -120,9 +130,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (obsController_btn) obsController_btn.addEventListener('click', obsController_btn_pressed);
   if (joinSessionBtn) joinSessionBtn.addEventListener('click', joinSession);
+  if (sendActionBtn)
+    sendActionBtn.addEventListener('click', () => {
+      const selectedAction = actionSelect.value;
+      sendSelectedAction(selectedAction);
+    });
 });
 
 function obsController_btn_pressed() {
   if (!isConnected()) return;
-  location.href='obs-controller.html';
+  location.href = 'obs-controller.html';
 }

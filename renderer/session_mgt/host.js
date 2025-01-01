@@ -79,12 +79,14 @@ function startHostWebSocket() {
   ws.addEventListener('open', () => {
     logHost('Session opened. Authenticating as host...');
 
-    ws.send(JSON.stringify({
-      type: 'authenticate',
-      encryptedToken,
-      password: generatedPassword,
-      role: 'host',
-    }));
+    ws.send(
+      JSON.stringify({
+        type: 'authenticate',
+        encryptedToken,
+        password: generatedPassword,
+        role: 'host',
+      })
+    );
   });
 
   ws.addEventListener('message', (event) => {
@@ -95,39 +97,35 @@ function startHostWebSocket() {
         hostClientId = data.clientId;
 
         logHost('Authenticated. Session is now running');
-        setStatus(window.i18n.t('session_status_running'))
+        setStatus(window.i18n.t('session_status_running'));
         if (createSessionBtn) createSessionBtn.classList.add('hidden');
         if (closeSessionBtn) closeSessionBtn.classList.remove('hidden');
       }
 
-      if (data.type === 'forward') {
-        logHost(`action=${data.action}, clientId=${data.clientId}`);
-        let payload = {};
-
-        switch (data.action) {
-          case 'GetVersion':
-            payload = { version: 'v0.1.0' };
-            break;
-          case 'Connection':
-            payload = { message: 'OK' };
-            break;
-          default:
-            payload = { error: 'Unknown action' };
-            break;
-        }
-
-        ws.send(JSON.stringify({
-          type: 'response',
-          action: data.action,
-          clientId: data.clientId,
-          payload,
-        }));
-      }
+      window.actionAPI.handleActionMessage(data, {
+        onAction: (action, payload) => {
+          logHost(`Received action: ${action} with payload: ${JSON.stringify(payload)}`);
+          const responsePayload = window.actionAPI.handleObsAction(action, payload);
+          ws.send(
+            JSON.stringify({
+              type: 'response',
+              action,
+              clientId: data.clientId,
+              payload: responsePayload,
+            })
+          );
+        },
+        onError: (error) => {
+          logHost(`Error from client: ${error}`);
+        },
+      });
     } catch (parseErr) {
-      ws.send(JSON.stringify({
-        type: 'error',
-        message: 'Invalid message format'
-      }));
+      ws.send(
+        JSON.stringify({
+          type: 'error',
+          message: 'Invalid message format',
+        })
+      );
     }
   });
 
@@ -154,7 +152,7 @@ if (createSessionBtn) {
 
 async function closeSessionBtnPressed() {
   logHost('Closing Session...');
-  setStatus(window.i18n.t('session_status_closing'))
+  setStatus(window.i18n.t('session_status_closing'));
 
   if (!hostClientId) {
     logHost('No hostClientId found – cannot delete session.');
@@ -186,5 +184,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   setStatus(window.i18n.t('session_status_closed'));
 
   // buttons
-  if (closeSessionBtn) { closeSessionBtn.addEventListener('click', closeSessionBtnPressed) }
+  if (closeSessionBtn) closeSessionBtn.addEventListener('click', closeSessionBtnPressed);
 });

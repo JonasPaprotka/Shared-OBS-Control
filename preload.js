@@ -1,4 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const path = require('path');
+
+const { sendAction, handleActionMessage } = require('./renderer/session_mgt/actionHandler.js');
+const { obsManager } = require('./renderer/session_mgt/obsManager.js');
 
 const argLocale =
   process.argv.find((arg) => arg.startsWith('--user-locale='))?.split('=')[1] ||
@@ -53,4 +57,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
 
   getDetectedLocale: () => argLocale,
+});
+
+contextBridge.exposeInMainWorld('actionAPI', {
+  sendAction: (action, payload) => sendAction(action, payload),
+  handleActionMessage: (data, handlers) => handleActionMessage(data, handlers),
+  handleObsAction: (action, payload) => obsManager.handleAction(action, payload),
+});
+
+contextBridge.exposeInMainWorld('authAPI', {
+  getSessionData: async () => {
+    return await ipcRenderer.invoke('get-session-data');
+  },
 });
