@@ -8,7 +8,13 @@
   "update_dialog_button_later": "Later",
   "update_error_message": "An error occurred while updating the application.",
   "create_new_session": "Create New Session",
-  "session_id": "Session ID:",
   "password": "Password:",
-  "join_session": "Join Session"
+  "join_session": "Join Session",
+  "session_info": "Session Info",
+  "session_token": "Session Token:",
+  "status": "Status:",
+  "host_logs": "Host Logs",
+  "client_logs": "Client Logs",
+  "connected_as": "Connected as",
+  "session_expiry": "Session Expiry"
 }

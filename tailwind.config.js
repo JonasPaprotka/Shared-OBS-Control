@@ -4,6 +4,19 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      const newUtilities = {
+        '.app-region-drag': {
+          '-webkit-app-region': 'drag',
+        },
+        '.app-region-no-drag': {
+          '-webkit-app-region': 'no-drag',
+        },
+      };
+
+      addUtilities(newUtilities, ['responsive']);
+    },
+  ],
 }
 

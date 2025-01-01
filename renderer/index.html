@@ -1,29 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none';">
   <title>Shared OBS Control</title>
-  <link rel="stylesheet" href="output.css" />
-  <link rel="stylesheet" href="restrictions.css" />
+  <link rel="stylesheet" href="output.css"/>
+  <link rel="stylesheet" href="restrictions.css"/>
 </head>
 <body class="bg-slate-800">
-  <!-- Title Bar -->
   <div id="titlebar-container"></div>
 
   <!-- Buttons -->
   <div class="flex items-center justify-center h-screen">
     <div class="flex flex-col space-y-2">
-      <button
-        class="bg-slate-600 hover:bg-slate-700 text-white font-semibold py-2 px-4 border border-slate-800 rounded shadow"
-        onclick="location.href='obs-share-control.html'" data-lang="share_obs_control">
-        Share OBS Control
-      </button>
-      <button
-        class="bg-slate-600 hover:bg-slate-700 text-white font-semibold py-2 px-4 border border-slate-800 rounded shadow"
-        onclick="location.href='obs-controller-login.html'" data-lang="control_obs">
-        Control OBS
-      </button>
+      <button id="share_obs_control_btn" class="bg-slate-600 hover:bg-slate-700 text-white font-semibold py-2 px-4 border border-slate-800 rounded shadow" data-lang="share_obs_control">Share OBS Control</button>
+      <button id="control_obs_btn" class="bg-slate-600 hover:bg-slate-700 text-white font-semibold py-2 px-4 border border-slate-800 rounded shadow" data-lang="control_obs">Control OBS</button>
     </div>
   </div>
 

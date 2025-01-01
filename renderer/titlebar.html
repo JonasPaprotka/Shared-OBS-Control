@@ -1,27 +1,17 @@
-<div class="bg-slate-800 grid grid-cols-3 items-center h-10" style="-webkit-app-region: drag;">
+<div class="bg-slate-800 grid grid-cols-3 items-center h-10 app-region-drag">
   <!-- Icon -->
-  <div class="p-2">
-    <img src="../assets/icons/icon.png" alt="Icon" class="w-6 h-6" style="-webkit-app-region: no-drag;" />
+  <div class="p-2 app-region-drag">
+    <img src="../assets/icons/icon.png" alt="Icon" class="w-6 h-6"/>
   </div>
-
+  
   <!-- Title -->
-  <div class="flex items-center justify-center">
+  <div class="flex items-center justify-center app-region-drag">
     <span class="text-white font-semibold">Shared OBS Control</span>
   </div>
-
+  
   <!-- Window Buttons -->
-  <div class="flex items-center justify-end space-x-0" style="height: 100%;">
-    <button
-      id="minimize"
-      class="text-white font-semibold hover:bg-slate-900 w-10 h-full flex items-center justify-center"
-      style="-webkit-app-region: no-drag;">
-      –
-    </button>
-    <button
-      id="close"
-      class="text-white font-semibold hover:bg-red-900 w-10 h-full flex items-center justify-center"
-      style="-webkit-app-region: no-drag;">
-      ✕
-    </button>
+  <div class="flex items-center justify-end space-x-0 h-full">
+    <button id="minimize" class="text-white font-semibold hover:bg-slate-900 w-10 h-full flex items-center justify-center app-region-no-drag">–</button>
+    <button id="close" class="text-white font-semibold hover:bg-red-900 w-10 h-full flex items-center justify-center app-region-no-drag">✕</button>
   </div>
 </div>

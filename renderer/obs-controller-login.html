@@ -1,49 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Join OBS Control</title>
-  <link rel="stylesheet" href="output.css" />
-  <link rel="stylesheet" href="restrictions.css" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none';">
+  <title>Shared OBS Control</title>
+  <link rel="stylesheet" href="output.css"/>
+  <link rel="stylesheet" href="restrictions.css"/>
 </head>
-<body class="bg-slate-800 text-white font-sans">
-  <!-- Title Bar -->
+<body class="bg-slate-800 text-white font-sans min-h-screen">
   <div id="titlebar-container"></div>
 
-  <!-- Join Session -->
-  <div id="join-form" class="max-w-md mx-auto bg-slate-700 p-6 rounded shadow-lg mt-6">
-    <h2 class="text-xl font-bold mb-4">Join Session</h2>
-    <label for="session-token" class="block font-semibold mb-2">Encrypted Token:</label>
-    <input type="text" id="session-token" placeholder="Paste the host’s token" required class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded"/>
-    <label for="session-password" class="block font-semibold mb-2">Password:</label>
-    <input type="text" id="session-password" placeholder="Paste the host’s password" required class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded"/>
+  <div class="flex w-full px-6 py-4 space-x-6">
 
-    <div class="text-center">
-      <button id="join-session-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition">Join Session</button>
+    <!-- Left Column -->
+    <div class="flex-1 space-y-6">
+      <!-- Join Session -->
+      <div id="join-form" class="bg-slate-700 p-6 rounded shadow-lg">
+        <h2 class="text-xl font-bold mb-4" data-lang="join_session">Join Session</h2>
+        <label for="session-token" class="block font-semibold mb-2" data-lang="session_token">Session Token:</label>
+        <input type="text" id="session-token" required class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded"/>
+        <label for="session-password" class="block font-semibold mb-2" data-lang="password">Password:</label>
+        <input type="text" id="session-password" required class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded"/>
+
+        <div class="text-center">
+          <button id="join-session-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"data-lang="join_session">Join Session</button>
+        </div>
+      </div>
+
+      <!-- Client Informations -->
+      <div class="bg-slate-700 p-6 rounded shadow-lg">
+        <h2 class="text-xl font-bold mb-4" data-lang="connected_as">Connected as</h2>
+        <p>Feature not Implemented yet -- just a placeholder</p>
+      </div>
+
+      <!-- Session Expiry -->
+      <div class="bg-slate-700 p-6 rounded shadow-lg">
+        <h2 class="text-xl font-bold mb-4" data-lang="session_expiry">Session Expiry</h2>
+        <p>Feature not Implemented yet -- just a placeholder</p>
+      </div>
     </div>
-  </div>
 
-  <!-- TESTING -->
-  <div id="action-area" class="max-w-md mx-auto bg-slate-700 p-6 rounded shadow-lg mt-6 hidden">
-    <h2 class="text-xl font-bold mb-4">Client Actions</h2>
-    <label for="action-select" class="block font-semibold mb-2">Choose an Action:</label>
-    <select id="action-select" class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded focus:outline-none">
-      <option value="">-- Select Action --</option>
-      <option value="GetVersion">GetVersion</option>
-      <option value="TestConnection">TestConnection</option>
-      <option value="SomeCustomAction">SomeCustomAction</option>
-    </select>
+    <!-- Right Column -->
+    <div class="w-1/3 space-y-6">
+      <!-- Client Logs -->
+      <div class="bg-slate-700 p-6 rounded shadow-lg">
+        <h2 class="text-xl font-bold mb-4" data-lang="client_logs">Client Logs</h2>
+        <div id="client-logs" class="h-60 overflow-y-auto bg-slate-800 p-2 rounded text-sm"></div>
+      </div>
 
-    <div class="text-center">
-      <button id="send-action-btn" class="px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition">Send Action</button>
+      <!-- Continue to Dashboard -->
+      <div class="bg-slate-700 p-6 rounded shadow-lg">
+        <h2 class="text-xl font-bold mb-4" data-lang="control_obs">Control OBS</h2>
+        <p>Continue to the OBS-Controller Dashboard</p>
+      </div>
     </div>
-  </div>
-
-  <!-- Logs -->
-  <div class="max-w-md mx-auto bg-slate-700 p-6 rounded shadow-lg mt-6">
-    <h2 class="text-xl font-bold mb-4">Client Logs</h2>
-    <div id="client-logs" class="h-60 overflow-y-auto bg-slate-800 p-2 rounded text-sm"></div>
   </div>
 
   <script src="renderer.js"></script>

@@ -21,9 +21,9 @@ fetch('titlebar.html')
   .catch((error) => console.error('Error loading title bar:', error));
 
 
-// language
 document.addEventListener('DOMContentLoaded', async () => {
-  
+    
+  // language
   let detectedLocale = window.electronAPI.getDetectedLocale() || '';
   let defaultLanguage = detectedLocale.trim() === '' ? 'en' : detectedLocale;
   defaultLanguage = defaultLanguage.toLowerCase();
@@ -38,4 +38,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error(`Translation error for key "${key}" in language "${defaultLanguage}":`, err);
     }
   }
+
+  // button onclick
+  const shareObsControl_btn = document.getElementById('share_obs_control_btn');
+  if (shareObsControl_btn) { shareObsControl_btn.addEventListener('click', shareObsControl_btn_pressed) }
+  
+  const controlObs_btn = document.getElementById('control_obs_btn');
+  if (controlObs_btn) { controlObs_btn.addEventListener('click', controlObs_btn_pressed) }
 });
+
+function shareObsControl_btn_pressed() {
+  location.href='obs-share-control.html';
+}
+
+function controlObs_btn_pressed() {
+  location.href='obs-controller-login.html';
+}
