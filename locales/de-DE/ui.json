@@ -8,7 +8,20 @@
   "update_dialog_button_later": "Später",
   "update_error_message": "Beim Aktualisieren der Anwendung ist ein Fehler aufgetreten.",
   "create_new_session": "Neue Sitzung erstellen",
-  "session_id": "Sitzungs-ID:",
   "password": "Passwort:",
-  "join_session": "Sitzung beitreten"
+  "join_session": "Sitzung beitreten",
+  "session_info": "Sitzungsinformationen",
+  "session_token": "Sitzungs-Token:",
+  "status": "Status:",
+  "host_logs": "Host Logs",
+  "client_logs": "Client Logs",
+  "connected_as": "Verbunden als",
+  "session_expiry": "Sitzungsablauf",
+  "close_session": "Sitzung schließen",
+  "OBS Controller": "OBS Steuerung",
+  "session_status_initializing": "Initialisierung...",
+  "session_status_running": "Wird ausgeführt...",
+  "session_status_closed": "Geschlossen",
+  "session_status_closing": "Schließt...",
+  "session_status_error_deleting": "Fehler beim Löschen"
 }
