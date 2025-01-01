@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src *; object-src 'none';">
   <title>Shared OBS Control</title>
   <link rel="stylesheet" href="output.css"/>
   <link rel="stylesheet" href="restrictions.css"/>
@@ -24,7 +24,7 @@
         <input type="text" id="session-password" required class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded"/>
 
         <div class="text-center">
-          <button id="join-session-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"data-lang="join_session">Join Session</button>
+          <button id="join-session-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition" data-lang="join_session">Join Session</button>
         </div>
       </div>
 
@@ -49,10 +49,9 @@
         <div id="client-logs" class="h-60 overflow-y-auto bg-slate-800 p-2 rounded text-sm"></div>
       </div>
 
-      <!-- Continue to Dashboard -->
-      <div class="bg-slate-700 p-6 rounded shadow-lg">
-        <h2 class="text-xl font-bold mb-4" data-lang="control_obs">Control OBS</h2>
-        <p>Continue to the OBS-Controller Dashboard</p>
+      <!-- OBS Controller -->
+      <div class="bg-slate-700 p-6 rounded shadow-lg text-center">
+        <button id="obs-controller-btn" class="py-4 px-8 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition" data-lang="OBS Controller">OBS Controller</button>
       </div>
     </div>
   </div>

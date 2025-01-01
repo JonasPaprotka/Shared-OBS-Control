@@ -17,7 +17,8 @@ html, body {
 }
 
 #session-token-text,
-#session-password-text {
+#session-password-text,
+#logs {
     -webkit-user-select: text;
     user-select: text;
     cursor: text;

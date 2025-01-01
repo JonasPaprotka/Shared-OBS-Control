@@ -1,22 +1,29 @@
 let encryptedToken = null;
 let generatedPassword = null;
 let ws = null;
+let hostClientId = null;
 
 const SESSION_SERVER_URL = 'https://open-session-server-production.up.railway.app';
 
 const createSessionBtn = document.getElementById('create-session-btn');
-const sessionInfoDiv = document.getElementById('session-info');
+const closeSessionBtn = document.getElementById('close-session-btn');
 const sessionTokenText = document.getElementById('session-token-text');
 const sessionPasswordText = document.getElementById('session-password-text');
+const sessionToken = document.getElementById('session-token');
+const sessionPassword = document.getElementById('session-password');
 const hostStatusText = document.getElementById('host-status-text');
 const hostLogs = document.getElementById('host-logs');
-
 
 function logHost(message) {
   if (!hostLogs) return;
   const time = new Date().toLocaleTimeString();
-  hostLogs.innerHTML += `<div>[${time}] ${message}</div>`;
+  hostLogs.innerHTML += `<div id="logs">[${time}] ${message}</div>`;
   hostLogs.scrollTop = hostLogs.scrollHeight;
+}
+
+function setStatus(message) {
+  if (message === '') return;
+  if (hostStatusText) hostStatusText.textContent = message;
 }
 
 function generateRandomPassword(length = 16) {
@@ -50,10 +57,11 @@ async function createSession() {
     const data = await response.json();
     encryptedToken = data.encryptedToken;
 
-    if (sessionInfoDiv) sessionInfoDiv.classList.remove('hidden');
     if (sessionTokenText) sessionTokenText.textContent = encryptedToken;
     if (sessionPasswordText) sessionPasswordText.textContent = generatedPassword;
-    if (hostStatusText) hostStatusText.textContent = 'WebSocket: Initializing...';
+    if (sessionToken) sessionToken.classList.remove('hidden');
+    if (sessionPassword) sessionPassword.classList.remove('hidden');
+    setStatus(window.i18n.t('session_status_initializing'));
 
     startHostWebSocket();
   } catch (err) {
@@ -62,19 +70,14 @@ async function createSession() {
 }
 
 function startHostWebSocket() {
-  if (!encryptedToken) {
-    return;
-  }
-  if (!generatedPassword) {
-    return;
-  }
+  if (!encryptedToken || !generatedPassword) return;
 
-  logHost('Connecting to WebSocket...');
+  logHost('Connecting to Session...');
   const wsUrl = SESSION_SERVER_URL.replace('https', 'wss');
   ws = new WebSocket(wsUrl);
 
   ws.addEventListener('open', () => {
-    logHost('WebSocket opened. Authenticating as host...');
+    logHost('Session opened. Authenticating as host...');
 
     ws.send(JSON.stringify({
       type: 'authenticate',
@@ -85,28 +88,28 @@ function startHostWebSocket() {
   });
 
   ws.addEventListener('message', (event) => {
-    logHost(`WS message received: ${event.data}`);
-
     try {
       const data = JSON.parse(event.data);
 
       if (data.type === 'authenticated') {
-        if (hostStatusText) hostStatusText.textContent = 'Host Authenticated!';
+        hostClientId = data.clientId;
+
+        logHost('Authenticated. Session is now running');
+        setStatus(window.i18n.t('session_status_running'))
+        if (createSessionBtn) createSessionBtn.classList.add('hidden');
+        if (closeSessionBtn) closeSessionBtn.classList.remove('hidden');
       }
 
       if (data.type === 'forward') {
-        logHost(`Forward from client: action=${data.action}, clientId=${data.clientId}`);
+        logHost(`action=${data.action}, clientId=${data.clientId}`);
         let payload = {};
 
         switch (data.action) {
           case 'GetVersion':
             payload = { version: 'v0.1.0' };
             break;
-          case 'TestConnection':
-            payload = { message: 'Connection is OK' };
-            break;
-          case 'SomeCustomAction':
-            payload = { response: 'Handled your custom action!' };
+          case 'Connection':
+            payload = { message: 'OK' };
             break;
           default:
             payload = { error: 'Unknown action' };
@@ -123,15 +126,21 @@ function startHostWebSocket() {
     } catch (parseErr) {
       ws.send(JSON.stringify({
         type: 'error',
-        message: 'Invalid message format in host'
+        message: 'Invalid message format'
       }));
     }
   });
 
   ws.addEventListener('close', () => {
-    if (hostStatusText) hostStatusText.textContent = 'Disconnected. Reconnecting in 3s...';
-    logHost('WebSocket closed. Will retry in 3 seconds...');
-    setTimeout(startHostWebSocket, 3000);
+    logHost('Session Deleted');
+    setStatus(window.i18n.t('session_status_closed'));
+    if (closeSessionBtn) closeSessionBtn.classList.add('hidden');
+    if (createSessionBtn) createSessionBtn.classList.remove('hidden');
+
+    if (sessionToken) sessionToken.classList.add('hidden');
+    if (sessionPassword) sessionPassword.classList.add('hidden');
+    if (sessionTokenText) sessionTokenText.textContent = '';
+    if (sessionPasswordText) sessionPasswordText.textContent = '';
   });
 
   ws.addEventListener('error', (err) => {
@@ -142,3 +151,40 @@ function startHostWebSocket() {
 if (createSessionBtn) {
   createSessionBtn.addEventListener('click', createSession);
 }
+
+async function closeSessionBtnPressed() {
+  logHost('Closing Session...');
+  setStatus(window.i18n.t('session_status_closing'))
+
+  if (!hostClientId) {
+    logHost('No hostClientId found – cannot delete session.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`${SESSION_SERVER_URL}/delete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clientId: hostClientId }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server responded with status ${response.status}`);
+    }
+
+    if (ws) {
+      ws.close();
+    }
+  } catch (err) {
+    logHost(`Error deleting session: ${err.message}`);
+    setStatus(window.i18n.t('session_status_error_deleting'));
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await window.i18n.load();
+  setStatus(window.i18n.t('session_status_closed'));
+
+  // buttons
+  if (closeSessionBtn) { closeSessionBtn.addEventListener('click', closeSessionBtnPressed) }
+});

@@ -9,7 +9,7 @@
     "build": "electron-builder",
     "tailwindcss": "npx tailwindcss -i ./renderer/input.css -o ./renderer/output.css --watch",
     "dist": "electron-builder --publish=always",
-    "updateSourceTranslations": "node scripts/updateSourceTranslations.js"
+    "updateTranslations": "node scripts/updateTranslations.js"
   },
   "repository": {
     "type": "git",

@@ -37,11 +37,11 @@ function getLocaleCode() {
 }
 
 function getSupportedLngs() {
-  const lngPath = path.join(__dirname, 'locales')
+  const lngPath = path.join(__dirname, 'locales');
   const lngs = fs.readdirSync(lngPath, { withFileTypes: true });
   const supportedLngs = lngs
-      .filter(entry => entry.isDirectory())
-      .map(entry => entry.name);
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
 
   return supportedLngs;
 }
@@ -59,7 +59,7 @@ function createMainWindow(appLocale) {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: true,
+      sandbox: false,
       additionalArguments: [`--user-locale=${appLocale}`],
     },
   });
@@ -105,10 +105,10 @@ app.on('ready', () => {
 
           const dialogOpts = {
             type: 'info',
-            buttons: buttons,
-            title: title,
-            message: message,
-            detail: detail,
+            buttons,
+            title,
+            message,
+            detail,
           };
 
           const returnValue = await dialog.showMessageBox(dialogOpts);
@@ -135,6 +135,7 @@ app.on('window-all-closed', () => {
   }
 });
 
+// Title bar
 ipcMain.on('window-minimize', (event) => {
   const window = BrowserWindow.fromWebContents(event.sender);
   if (window) window.minimize();
@@ -145,6 +146,7 @@ ipcMain.on('window-close', (event) => {
   if (window) window.close();
 });
 
+// Translation handler
 ipcMain.handle('translate', (event, { key }) => {
   const result = i18next.t(key);
   return result;

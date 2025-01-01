@@ -39,15 +39,31 @@ const extractTranslationsFromJS = (jsContent) => {
   const translations = new Set();
   const ast = acorn.parse(jsContent, { ecmaVersion: 'latest', sourceType: 'module' });
 
+  const isI18nCall = (callee) => {
+    if (callee.type !== 'MemberExpression') return false;
+
+    if (callee.property?.name !== 't') return false;
+
+    let current = callee.object;
+    while (current && current.type === 'MemberExpression') {
+      if (current.property?.name === 'i18n' || current.property?.name === 'i18next') {
+        return true;
+      }
+      current = current.object;
+    }
+
+    if (current?.type === 'Identifier' && (current.name === 'i18n' || current.name === 'i18next')) {
+      return true;
+    }
+
+    return false;
+  };
+
   const walk = (node) => {
     if (!node) return;
     switch (node.type) {
-      case 'CallExpression':
-        if (
-          node.callee?.type === 'MemberExpression' &&
-          node.callee.object?.name === 'i18next' &&
-          node.callee.property?.name === 't'
-        ) {
+      case 'CallExpression': {
+        if (isI18nCall(node.callee)) {
           const [keyArg] = node.arguments;
           if (keyArg?.type === 'Literal' && typeof keyArg.value === 'string') {
             translations.add(keyArg.value);
@@ -56,13 +72,15 @@ const extractTranslationsFromJS = (jsContent) => {
         node.arguments.forEach(walk);
         walk(node.callee);
         break;
+      }
+
       default:
         for (const prop in node) {
           if (node.hasOwnProperty(prop)) {
             const child = node[prop];
             if (Array.isArray(child)) {
-              child.forEach(c => c && typeof c.type === 'string' && walk(c));
-            } else if (child?.type) {
+              child.forEach((c) => c && typeof c.type === 'string' && walk(c));
+            } else if (child && typeof child.type === 'string') {
               walk(child);
             }
           }
@@ -81,29 +99,38 @@ const updateSourceTranslations = () => {
   const jsPattern = path.join(RENDERER_PATH, '**', '*.js').replace(/\\/g, '/');
   const jsPatternRoot = path.join(PROJECT_ROOT, '**', '*.js').replace(/\\/g, '/');
 
-  const htmlFiles = glob.sync(htmlPattern, { ignore: '**/node_modules/**' });
-  const jsFiles = glob.sync(jsPattern, { ignore: '**/node_modules/**' })
-                      .concat(glob.sync(jsPatternRoot, { ignore: '**/node_modules/**' }));
+  const ignorePatterns = [
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/locales/**',
+    '**/assets/**',
+    '**/.github/**'
+  ];
+
+  const htmlFiles = glob.sync(htmlPattern, { ignore: ignorePatterns });
+  const jsFiles = glob
+    .sync(jsPattern, { ignore: ignorePatterns })
+    .concat(glob.sync(jsPatternRoot, { ignore: ignorePatterns }));
 
   let extractedTranslations = {};
 
   // HTML
-  htmlFiles.forEach(file => {
+  htmlFiles.forEach((file) => {
     const content = fs.readFileSync(file, 'utf8');
     Object.assign(extractedTranslations, extractTranslationsFromHTML(content));
   });
 
   // JS
   const extractedJSKeys = new Set();
-  jsFiles.forEach(file => {
+  jsFiles.forEach((file) => {
     const content = fs.readFileSync(file, 'utf8');
     const jsTranslations = extractTranslationsFromJS(content);
-    jsTranslations.forEach(key => extractedJSKeys.add(key));
+    jsTranslations.forEach((key) => extractedJSKeys.add(key));
   });
 
   const sourceTranslations = readJSON(LOCALES_PATH);
 
-  extractedJSKeys.forEach(key => {
+  extractedJSKeys.forEach((key) => {
     if (!extractedTranslations.hasOwnProperty(key) && !sourceTranslations.hasOwnProperty(key)) {
       extractedTranslations[key] = '';
     }
@@ -111,7 +138,7 @@ const updateSourceTranslations = () => {
 
   let hasChanges = false;
 
-  Object.keys(extractedTranslations).forEach(key => {
+  Object.keys(extractedTranslations).forEach((key) => {
     const newValue = extractedTranslations[key];
     if (!sourceTranslations.hasOwnProperty(key)) {
       sourceTranslations[key] = newValue;
@@ -123,7 +150,7 @@ const updateSourceTranslations = () => {
   });
 
   const extractedKeys = new Set([...Object.keys(extractedTranslations), ...extractedJSKeys]);
-  Object.keys(sourceTranslations).forEach(key => {
+  Object.keys(sourceTranslations).forEach((key) => {
     if (!extractedKeys.has(key)) {
       delete sourceTranslations[key];
       hasChanges = true;

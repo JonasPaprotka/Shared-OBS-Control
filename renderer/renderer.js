@@ -41,13 +41,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // button onclick
   const shareObsControl_btn = document.getElementById('share_obs_control_btn');
-  if (shareObsControl_btn) { shareObsControl_btn.addEventListener('click', shareObsControl_btn_pressed) }
+  if (shareObsControl_btn) { shareObsControl_btn.addEventListener('click', obsController_btn_pressed) }
   
   const controlObs_btn = document.getElementById('control_obs_btn');
   if (controlObs_btn) { controlObs_btn.addEventListener('click', controlObs_btn_pressed) }
 });
 
-function shareObsControl_btn_pressed() {
+function obsController_btn_pressed() {
   location.href='obs-share-control.html';
 }
 

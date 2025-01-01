@@ -117,3 +117,14 @@ if (joinSessionBtn) {
 if (sendActionBtn) {
   sendActionBtn.addEventListener('click', sendAction);
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+  // buttons
+  const obsController_btn = document.getElementById('obs-controller-btn');
+  if (obsController_btn) { obsController_btn.addEventListener('click', obsController_btn_pressed) }
+});
+
+function obsController_btn_pressed() {
+  location.href='obs-controller.html';
+}
