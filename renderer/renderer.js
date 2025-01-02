@@ -22,7 +22,6 @@ fetch('titlebar.html')
 
 
 document.addEventListener('DOMContentLoaded', async () => {
-    
   // language
   let detectedLocale = window.electronAPI.getDetectedLocale() || '';
   let defaultLanguage = detectedLocale.trim() === '' ? 'en' : detectedLocale;
@@ -42,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // button onclick
   const shareObsControl_btn = document.getElementById('share_obs_control_btn');
   if (shareObsControl_btn) { shareObsControl_btn.addEventListener('click', obsController_btn_pressed) }
-  
+
   const controlObs_btn = document.getElementById('control_obs_btn');
   if (controlObs_btn) { controlObs_btn.addEventListener('click', controlObs_btn_pressed) }
 });

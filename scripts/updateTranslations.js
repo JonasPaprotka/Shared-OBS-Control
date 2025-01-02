@@ -17,7 +17,8 @@ const readJSON = (filePath) => {
 };
 
 const writeJSON = (filePath, data) => {
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+  const jsonString = JSON.stringify(data, null, 2) + '\n';
+  fs.writeFileSync(filePath, jsonString, 'utf8');
 };
 
 const extractTranslationsFromHTML = (htmlContent) => {

@@ -23,5 +23,7 @@
   "session_status_running": "Running...",
   "session_status_closed": "Closed",
   "session_status_closing": "Closing...",
-  "session_status_error_deleting": "Error Deleting"
+  "session_status_error_deleting": "Error Deleting",
+  "nav_home": "Home",
+  "nav_back": "Back"
 }

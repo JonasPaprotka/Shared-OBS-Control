@@ -1,16 +1,24 @@
-<div class="bg-slate-800 grid grid-cols-3 items-center h-10 app-region-drag">
-  <!-- Icon -->
-  <div class="p-2 app-region-drag">
-    <img src="../assets/icons/icon.png" alt="Icon" class="w-6 h-6"/>
+<div class="bg-slate-800 flex items-center h-10 app-region-drag px-2">
+    <div class="flex items-center space-x-2">
+    <!-- Icon -->
+    <div class="p-2 app-region-drag">
+      <img src="../assets/icons/icon.png" alt="Icon" class="w-6 h-6"/>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div id="nav-buttons" class="flex space-x-1 app-region-no-drag">
+      <button id="nav-home" class="text-white hover:bg-slate-900 p-2 rounded flex items-center justify-center" data-lang="nav_home">Home</button>
+      <button id="nav-back" class="text-white hover:bg-slate-900 p-2 rounded flex items-center justify-center" data-lang="nav_back">Back</button>
+    </div>
   </div>
-  
+
   <!-- Title -->
-  <div class="flex items-center justify-center app-region-drag">
+  <div class="flex-grow flex justify-center app-region-drag">
     <span class="text-white font-semibold">Shared OBS Control</span>
   </div>
-  
+
   <!-- Window Buttons -->
-  <div class="flex items-center justify-end space-x-0 h-full">
+  <div class="flex space-x-0 h-full">
     <button id="minimize" class="text-white font-semibold hover:bg-slate-900 w-10 h-full flex items-center justify-center app-region-no-drag">–</button>
     <button id="close" class="text-white font-semibold hover:bg-red-900 w-10 h-full flex items-center justify-center app-region-no-drag">✕</button>
   </div>
