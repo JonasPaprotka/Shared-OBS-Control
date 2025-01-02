@@ -79,7 +79,7 @@ async function initializeController() {
 function logController(message) {
   if (!controllerLogs) return;
   const time = new Date().toLocaleTimeString();
-  controllerLogs.innerHTML += `<div id="logs">[${time}] ${message}</div>`;
+  controllerLogs.innerHTML += `<div class='selectable'>[${time}] ${message}</div>`;
   controllerLogs.scrollTop = controllerLogs.scrollHeight;
 }
 

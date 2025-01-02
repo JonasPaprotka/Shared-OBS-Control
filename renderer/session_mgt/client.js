@@ -9,12 +9,15 @@ const sessionTokenInput = document.getElementById('session-token');
 const sessionPasswordInput = document.getElementById('session-password');
 const actionArea = document.getElementById('action-area');
 const obsController = document.getElementById('obs-controller');
-
+const clientInformations = document.getElementById('client-informations');
+const clientId = document.getElementById('client-id');
+const sessionExpiryInfromations = document.getElementById('session-expiry-informations');
+const sessionExpiry = document.getElementById('session-expiry');
 
 function logClient(message) {
   if (!clientLogs) return;
   const time = new Date().toLocaleTimeString();
-  clientLogs.innerHTML += `<div id="logs">[${time}] ${message}</div>`;
+  clientLogs.innerHTML += `<div class='selectable'>[${time}] ${message}</div>`;
   clientLogs.scrollTop = clientLogs.scrollHeight;
 }
 
@@ -78,7 +81,16 @@ async function joinSession() {
         });
 
         if (msg.type === 'authenticated') {
-          logClient('Successfully authenticated!');
+          logClient('Authenticated');
+
+          let clientIdLabel = window.i18n.t('client_id_label') + ' ';
+          if (clientId) clientId.textContent = clientIdLabel + msg.clientId;
+          if (clientInformations) clientInformations.classList.remove('hidden');
+
+          //TODO recive expiry infromations when connecting
+          if (sessionExpiryInfromations) sessionExpiryInfromations.classList.remove('hidden');
+
+
           if (obsController) obsController.classList.remove('hidden');
           if (actionArea) actionArea.classList.remove('hidden');
         }
@@ -88,8 +100,10 @@ async function joinSession() {
     });
 
     ws.addEventListener('close', () => {
-      if (obsController) obsController.classList.add('hidden');
       logClient('Connection closed.');
+
+      if (obsController) obsController.classList.add('hidden');
+      if (clientId) clientId.textContent = '';
     });
 
     ws.addEventListener('error', (err) => {
@@ -124,14 +138,13 @@ function isConnected() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  await window.i18n.load();
 
-  // buttons
   const obsController_btn = document.getElementById('obs-controller-btn');
-
   if (obsController_btn) obsController_btn.addEventListener('click', obsController_btn_pressed);
+
   if (joinSessionBtn) joinSessionBtn.addEventListener('click', joinSession);
-  if (sendActionBtn)
-    sendActionBtn.addEventListener('click', () => {
+  if (sendActionBtn) sendActionBtn.addEventListener('click', () => {
       const selectedAction = actionSelect.value;
       sendSelectedAction(selectedAction);
     });

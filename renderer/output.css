@@ -591,6 +591,10 @@ video {
   margin-top: 1.5rem;
 }
 
+.ml-3 {
+  margin-left: 0.75rem;
+}
+
 .block {
   display: block;
 }
@@ -807,11 +811,6 @@ video {
   padding: 1.5rem;
 }
 
-.px-2 {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-}
-
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -837,6 +836,11 @@ video {
   padding-bottom: 1rem;
 }
 
+.px-5 {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
 .pb-12 {
   padding-bottom: 3rem;
 }
@@ -853,8 +857,8 @@ video {
   padding-top: 1rem;
 }
 
-.pl-2 {
-  padding-left: 0.5rem;
+.pl-5 {
+  padding-left: 1.25rem;
 }
 
 .text-center {
@@ -920,6 +924,13 @@ video {
 
 .app-region-no-drag {
   -webkit-app-region: no-drag;
+}
+
+.selectable {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+       user-select: text;
+  cursor: text;
 }
 
 .hover\:bg-blue-700:hover {

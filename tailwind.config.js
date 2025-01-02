@@ -8,11 +8,16 @@ module.exports = {
     function ({ addUtilities }) {
       const newUtilities = {
         '.app-region-drag': {
-          '-webkit-app-region': 'drag',
+          '-webkit-app-region': 'drag'
         },
         '.app-region-no-drag': {
-          '-webkit-app-region': 'no-drag',
+          '-webkit-app-region': 'no-drag'
         },
+        '.selectable': {
+          '-webkit-user-select': 'text',
+          'user-select': 'text',
+          'cursor': 'text'
+        }
       };
 
       addUtilities(newUtilities, ['responsive']);

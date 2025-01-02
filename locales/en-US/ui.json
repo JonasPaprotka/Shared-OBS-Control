@@ -15,7 +15,6 @@
   "status": "Status:",
   "host_logs": "Host Logs",
   "client_logs": "Client Logs",
-  "connected_as": "Connected as",
   "session_expiry": "Session Expiry",
   "close_session": "Close Session",
   "OBS Controller": "OBS Controller",
@@ -24,5 +23,8 @@
   "session_status_closed": "Closed",
   "session_status_closing": "Closing...",
   "session_status_error_deleting": "Error Deleting",
-  "nav_home": "Home"
+  "nav_home": "Home",
+  "connection_information": "Connection Information",
+  "client_id_label": "Client ID:",
+  "test_server_connection": "Test Server Connection"
 }

@@ -22,11 +22,6 @@ async function loadTranslations() {
     } else {
       fallbackDict = {};
     }
-
-    console.log(`Loaded translations for locale "${argLocale}":`, translationDict);
-    if (fallbackDict && Object.keys(fallbackDict).length > 0) {
-      console.log(`Loaded fallback translations "en-US":`, fallbackDict);
-    }
   } catch (err) {
     console.error('Error loading translation bundles:', err);
     translationDict = {};

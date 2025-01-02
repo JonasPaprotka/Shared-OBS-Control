@@ -50,10 +50,11 @@ The project supports multiple languages. If you make changes, follow these steps
 
 - **JavaScript Translations:**
   - In `main.js`, use `i18next.t('')`.
-  - **Example:**
-    ```javascript
-    const example = i18next.t('update_dialog_button_later');
-    ```
+    - **Example:**
+      ```javascript
+      const example = i18next.t('update_dialog_button_later');
+      ```
+  - In isolated js files use `window.i18n.t('')`.
 
 - **Update Source Translations:**
   After modifying translations, run the following script to update the source translations:

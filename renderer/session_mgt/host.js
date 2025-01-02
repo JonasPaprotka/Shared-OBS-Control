@@ -17,7 +17,7 @@ const hostLogs = document.getElementById('host-logs');
 function logHost(message) {
   if (!hostLogs) return;
   const time = new Date().toLocaleTimeString();
-  hostLogs.innerHTML += `<div id="logs">[${time}] ${message}</div>`;
+  hostLogs.innerHTML += `<div class='selectable'>[${time}] ${message}</div>`;
   hostLogs.scrollTop = hostLogs.scrollHeight;
 }
 
@@ -37,6 +37,7 @@ function generateRandomPassword(length = 16) {
 
 async function createSession() {
   try {
+    if (createSessionBtn) createSessionBtn.classList.add('hidden');
     logHost('Creating a new Host session...');
 
     generatedPassword = generateRandomPassword();
@@ -66,6 +67,7 @@ async function createSession() {
     startHostWebSocket();
   } catch (err) {
     logHost(`Error creating session: ${err.message}`);
+    if (createSessionBtn) createSessionBtn.classList.remove('hidden');
   }
 }
 
@@ -98,7 +100,6 @@ function startHostWebSocket() {
 
         logHost('Authenticated. Session is now running');
         setStatus(window.i18n.t('session_status_running'));
-        if (createSessionBtn) createSessionBtn.classList.add('hidden');
         if (closeSessionBtn) closeSessionBtn.classList.remove('hidden');
       }
 
@@ -146,10 +147,6 @@ function startHostWebSocket() {
   });
 }
 
-if (createSessionBtn) {
-  createSessionBtn.addEventListener('click', createSession);
-}
-
 async function closeSessionBtnPressed() {
   logHost('Closing Session...');
   setStatus(window.i18n.t('session_status_closing'));
@@ -184,5 +181,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   setStatus(window.i18n.t('session_status_closed'));
 
   // buttons
+  if (createSessionBtn) createSessionBtn.addEventListener('click', createSession);
   if (closeSessionBtn) closeSessionBtn.addEventListener('click', closeSessionBtnPressed);
 });

@@ -16,26 +16,29 @@
     <!-- Left Column -->
     <div class="flex-1 space-y-6">
       <!-- New Session -->
-      <div class="flex justify-center mt-6 pt-4 pb-4 max-w-xl mx-auto rounded shadow-md bg-slate-700">
-        <button id="create-session-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"
+      <div class="bg-slate-700 p-4 rounded shadow-lg">
+        <button id="create-session-btn" class="px-5 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"
         data-lang="create_new_session">Create New Session</button>
 
-        <button id="close-session-btn" class="px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition hidden"
+        <button id="close-session-btn" class="px-5 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition hidden"
         data-lang="close_session">Close Session</button>
+
+        <button id="test-server-connection-btn" class=" hidden ml-3 px-5 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition"
+        data-lang="test_server_connection">Test Server Connection</button>
       </div>
 
       <!-- Session Info -->
-      <div id="session-info" class="max-w-xl mx-auto bg-slate-700 p-6 mt-4 rounded shadow-md">
+      <div id="session-info" class="bg-slate-700 p-6 rounded shadow-lg">
         <h2 class="text-xl font-bold mb-4" data-lang="session_info">Session Info</h2>
 
         <div id="session-token" class="mb-2 hidden">
           <strong data-lang="session_token">Session Token:</strong>
-          <span id="session-token-text" class="ml-2 break-all"></span>
+          <span id="session-token-text" class="ml-2 break-all selectable"></span>
         </div>
 
         <div id="session-password" class="mb-2 hidden">
           <strong data-lang="password">Password:</strong>
-          <span id="session-password-text" class="ml-2 break-all"></span>
+          <span id="session-password-text" class="ml-2 break-all selectable"></span>
         </div>
 
         <div class="mb-2">
@@ -48,7 +51,7 @@
     <!-- Right Column -->
     <div class="w-1/3 space-y-6">
       <!-- Host Logs -->
-      <div class="max-w-xl mx-auto bg-slate-700 p-6 mt-4 rounded shadow-md">
+      <div class="bg-slate-700 p-6 rounded shadow-lg">
         <h2 class="text-xl font-bold mb-4" data-lang="host_logs">Host Logs</h2>
         <div id="host-logs" class="h-60 overflow-y-auto bg-slate-800 p-2 rounded text-sm"></div>
       </div>
