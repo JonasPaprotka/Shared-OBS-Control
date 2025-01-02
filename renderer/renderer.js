@@ -1,27 +1,18 @@
-// titlebar rendering
-fetch('titlebar.html')
-  .then((response) => response.text())
-  .then((html) => {
-    document.getElementById('titlebar-container').innerHTML = html;
-
-    const btnMinimize = document.getElementById('minimize');
-    if (btnMinimize) {
-      btnMinimize.addEventListener('click', () => {
-        window.electronAPI.minimize();
-      });
-    }
-
-    const btnClose = document.getElementById('close');
-    if (btnClose) {
-      btnClose.addEventListener('click', () => {
-        window.electronAPI.close();
-      });
-    }
-  })
-  .catch((error) => console.error('Error loading title bar:', error));
-
-
 document.addEventListener('DOMContentLoaded', async () => {
+  // titlebar rendering
+  fetch('titlebar.html')
+    .then((response) => response.text())
+    .then((html) => {
+      document.getElementById('titlebar-container').innerHTML = html;
+
+      const btnMinimize = document.getElementById('minimize');
+      if (btnMinimize) btnMinimize.addEventListener('click', () => { window.electronAPI.minimize() });
+
+      const btnClose = document.getElementById('close');
+      if (btnClose) btnClose.addEventListener('click', () => { window.electronAPI.close() });
+    })
+    .catch((error) => console.error('Error loading title bar:', error));
+
   // language
   let detectedLocale = window.electronAPI.getDetectedLocale() || '';
   let defaultLanguage = detectedLocale.trim() === '' ? 'en' : detectedLocale;
@@ -38,18 +29,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // button onclick
-  const shareObsControl_btn = document.getElementById('share_obs_control_btn');
-  if (shareObsControl_btn) { shareObsControl_btn.addEventListener('click', obsController_btn_pressed) }
+  // button mgt
+  const shareObsControlBtn = document.getElementById('share_obs_control_btn');
+  if (shareObsControlBtn) shareObsControlBtn.addEventListener('click', () => { location.href='obs-share-control.html' });
 
-  const controlObs_btn = document.getElementById('control_obs_btn');
-  if (controlObs_btn) { controlObs_btn.addEventListener('click', controlObs_btn_pressed) }
+  const controlObsBtn = document.getElementById('control_obs_btn');
+  if (controlObsBtn) controlObsBtn.addEventListener('click', () => { location.href='obs-controller-login.html' });
+
+  const navHomeBtn = document.getElementById('nav-home');
+  if (navHomeBtn) navHomeBtn.addEventListener('click', () => {
+    if (location.href.endsWith('index.html')) return;
+    location.href='index.html'
+  });
 });
-
-function obsController_btn_pressed() {
-  location.href='obs-share-control.html';
-}
-
-function controlObs_btn_pressed() {
-  location.href='obs-controller-login.html';
-}
