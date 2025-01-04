@@ -15,7 +15,7 @@ async function initializeController() {
       return;
     }
 
-    const response = await fetch(`${SESSION_SERVER_URL}/handshake`, {
+    const response = await fetch(`${SESSION_SERVER_URL}/api/handshake`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

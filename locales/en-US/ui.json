@@ -26,5 +26,7 @@
   "nav_home": "Home",
   "connection_information": "Connection Information",
   "client_id_label": "Client ID:",
-  "test_server_connection": "Test Server Connection"
+  "obs_websocker_connection": "OBS Websocket Connection",
+  "obs_websocket_password": "Password:",
+  "connect": "Connect"
 }

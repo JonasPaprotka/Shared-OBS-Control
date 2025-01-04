@@ -33,7 +33,7 @@ async function joinSession() {
   try {
     logClient('Starting handshake...');
 
-    const response = await fetch(`${SESSION_SERVER_URL}/handshake`, {
+    const response = await fetch(`${SESSION_SERVER_URL}/api/handshake`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -87,9 +87,8 @@ async function joinSession() {
           if (clientId) clientId.textContent = clientIdLabel + msg.clientId;
           if (clientInformations) clientInformations.classList.remove('hidden');
 
-          //TODO recive expiry infromations when connecting
+          if (sessionExpiry) sessionExpiry.textContent = new Date(msg.expiresAt).toLocaleString();
           if (sessionExpiryInfromations) sessionExpiryInfromations.classList.remove('hidden');
-
 
           if (obsController) obsController.classList.remove('hidden');
           if (actionArea) actionArea.classList.remove('hidden');

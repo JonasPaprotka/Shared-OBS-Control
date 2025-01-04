@@ -17,14 +17,11 @@
     <div class="flex-1 space-y-6">
       <!-- New Session -->
       <div class="bg-slate-700 p-4 rounded shadow-lg">
-        <button id="create-session-btn" class="px-5 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"
+        <button id="create-session-btn" class="px-5 py-2 bg-blue-600 font-semibold rounded hover:bg-blue-700 transition"
         data-lang="create_new_session">Create New Session</button>
 
-        <button id="close-session-btn" class="px-5 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition hidden"
+        <button id="close-session-btn" class="px-5 py-2 bg-red-600 font-semibold rounded hover:bg-red-700 transition hidden"
         data-lang="close_session">Close Session</button>
-
-        <button id="test-server-connection-btn" class=" hidden ml-3 px-5 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition"
-        data-lang="test_server_connection">Test Server Connection</button>
       </div>
 
       <!-- Session Info -->
@@ -50,6 +47,18 @@
 
     <!-- Right Column -->
     <div class="w-1/3 space-y-6">
+      <!-- OBS Websocket Connection -->
+      <div id="connect-obs-websocket-form" class="bg-slate-700 p-6 rounded shadow-lg">
+        <h2 class="text-xl font-bold mb-4" data-lang="obs_websocker_connection">OBS Websocket Connection</h2>
+        <label for="obs-websocket-password" class="block font-semibold mb-2" data-lang="obs_websocket_password">Password:</label>
+        <input type="password" id="obs-websocket-password" required class="w-full px-4 py-2 mb-4 bg-slate-800 border border-slate-600 rounded"/>
+
+        <div class="text-center">
+          <button id="connect-obs-websocket-btn" class="px-4 py-2 bg-blue-600 font-semibold rounded hover:bg-blue-700 transition"
+          data-lang="connect">Connect</button>
+        </div>
+      </div>
+
       <!-- Host Logs -->
       <div class="bg-slate-700 p-6 rounded shadow-lg">
         <h2 class="text-xl font-bold mb-4" data-lang="host_logs">Host Logs</h2>
@@ -60,5 +69,6 @@
 
   <script src="renderer.js"></script>
   <script src="session_mgt/host.js"></script>
+  <script src="obs_mgt/websocketMgt.js"></script>
 </body>
 </html>

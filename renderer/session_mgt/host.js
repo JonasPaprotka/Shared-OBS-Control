@@ -42,7 +42,7 @@ async function createSession() {
 
     generatedPassword = generateRandomPassword();
 
-    const response = await fetch(`${SESSION_SERVER_URL}/handshake`, {
+    const response = await fetch(`${SESSION_SERVER_URL}/api/handshake`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -157,7 +157,7 @@ async function closeSessionBtnPressed() {
   }
 
   try {
-    const response = await fetch(`${SESSION_SERVER_URL}/delete`, {
+    const response = await fetch(`${SESSION_SERVER_URL}/api/delete`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ clientId: hostClientId }),
