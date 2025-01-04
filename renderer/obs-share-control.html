@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src *; object-src 'none';">
   <title>Shared OBS Control</title>
   <link rel="stylesheet" href="output.css"/>
-  <link rel="stylesheet" href="restrictions.css"/>
+  <link rel="stylesheet" href="base.css"/>
 </head>
 <body class="bg-slate-800 text-white font-sans">
   <div id="titlebar-container"></div>
@@ -28,19 +28,56 @@
       <div id="session-info" class="bg-slate-700 p-6 rounded shadow-lg">
         <h2 class="text-xl font-bold mb-4" data-lang="session_info">Session Info</h2>
 
-        <div id="session-token" class="mb-2 hidden">
-          <strong data-lang="session_token">Session Token:</strong>
-          <span id="session-token-text" class="ml-2 break-all selectable"></span>
+        <!-- Session Token -->
+        <div id="session-token" class="mb-4 hidden">
+          <label for="session-token-field" class="block font-semibold mb-2" data-lang="session_token">Session Token:</label>
+          <div class="flex items-center">
+            <input id="session-token-field" type="text" class="w-full px-4 py-2 bg-slate-800 border border-slate-600 rounded text-sm text-gray-300 truncate" readonly/>
+            <button id="copy-session-token-btn" class="ml-2 px-3 py-2 bg-blue-600 font-semibold text-sm rounded hover:bg-blue-700 transition"
+            data-lang="copy_btn">Copy</button>
+          </div>
         </div>
 
-        <div id="session-password" class="mb-2 hidden">
-          <strong data-lang="password">Password:</strong>
-          <span id="session-password-text" class="ml-2 break-all selectable"></span>
+        <!-- Session Password -->
+        <div id="session-password" class="mb-4 hidden">
+          <label for="session-password-field" class="block font-semibold mb-2" data-lang="password">Password:</label>
+          <div class="flex items-center">
+            <input id="session-password-field" type="password" class="flex-1 px-4 py-2 bg-slate-800 border border-slate-600 rounded text-sm text-gray-300" readonly/>
+            <button id="toggle-password-visibility-btn" class="ml-2 px-3 py-2 bg-gray-600 font-semibold text-sm rounded hover:bg-gray-700 transition"
+            data-lang="show">Show</button>
+            <button id="copy-session-password-btn" class="ml-2 px-3 py-2 bg-blue-600 font-semibold text-sm rounded hover:bg-blue-700 transition"
+            data-lang="copy_btn">Copy</button>
+          </div>
         </div>
 
+        <!-- Status -->
         <div class="mb-2">
           <strong data-lang="status">Status:</strong>
           <span id="host-status-text" class="ml-2"></span>
+        </div>
+
+        <!-- Expiry -->
+        <div id="session-expiry-div" class="mb-2 hidden">
+          <strong data-lang="session_expiry_label">Expiry:</strong>
+          <span id="session-expiry-text" class="ml-2"></span>
+        </div>
+      </div>
+
+      <!-- Connections -->
+      <div id="connections-info" class="space-y-6">
+        <!-- OBS WebSocket Status -->
+        <div id="obs-status-info" class="bg-slate-700 p-6 rounded shadow-lg">
+          <h2 class="text-xl font-bold mb-4">OBS WebSocket Status</h2>
+          <div id="obs-status" class="text-sm">
+            <span>OBS WebSocket:</span>
+            <span id="obs-status-text" class="font-bold text-red-500">Not Connected</span>
+          </div>
+        </div>
+
+        <!-- Client Connections -->
+        <div id="client-connections-info" class="bg-slate-700 p-6 rounded shadow-lg">
+          <h2 class="text-xl font-bold mb-4">Client Connections</h2>
+          <div id="client-connections" class="h-40 overflow-y-auto bg-slate-800 p-2 rounded text-sm"></div>
         </div>
       </div>
     </div>

@@ -7,12 +7,17 @@ const SESSION_SERVER_URL = 'https://open-session-server-production.up.railway.ap
 
 const createSessionBtn = document.getElementById('create-session-btn');
 const closeSessionBtn = document.getElementById('close-session-btn');
-const sessionTokenText = document.getElementById('session-token-text');
-const sessionPasswordText = document.getElementById('session-password-text');
+const sessionTokenField = document.getElementById('session-token-field');
+const copySessionTokenValueBtn = document.getElementById('copy-session-token-btn');
+const sessionPasswordField = document.getElementById('session-password-field');
+const copySessionPasswordValueBtn = document.getElementById('copy-session-password-btn');
 const sessionToken = document.getElementById('session-token');
 const sessionPassword = document.getElementById('session-password');
 const hostStatusText = document.getElementById('host-status-text');
 const hostLogs = document.getElementById('host-logs');
+const sessionExpiryDiv = document.getElementById('session-expiry-div');
+const sessionExpiryText = document.getElementById('session-expiry-text');
+const togglePasswordBtn = document.getElementById('toggle-password-visibility-btn');
 
 function logHost(message) {
   if (!hostLogs) return;
@@ -58,8 +63,8 @@ async function createSession() {
     const data = await response.json();
     encryptedToken = data.encryptedToken;
 
-    if (sessionTokenText) sessionTokenText.textContent = encryptedToken;
-    if (sessionPasswordText) sessionPasswordText.textContent = generatedPassword;
+    if (sessionTokenField) sessionTokenField.value = encryptedToken;
+    if (sessionPasswordField) sessionPasswordField.value = generatedPassword;
     if (sessionToken) sessionToken.classList.remove('hidden');
     if (sessionPassword) sessionPassword.classList.remove('hidden');
     setStatus(window.i18n.t('session_status_initializing'));
@@ -101,6 +106,8 @@ function startHostWebSocket() {
         logHost('Authenticated. Session is now running');
         setStatus(window.i18n.t('session_status_running'));
         if (closeSessionBtn) closeSessionBtn.classList.remove('hidden');
+        if (sessionExpiryText) sessionExpiryText.textContent = new Date(data.expiresAt).toLocaleString();
+        if (sessionExpiryDiv) sessionExpiryDiv.classList.remove('hidden');
       }
 
       window.actionAPI.handleActionMessage(data, {
@@ -138,8 +145,10 @@ function startHostWebSocket() {
 
     if (sessionToken) sessionToken.classList.add('hidden');
     if (sessionPassword) sessionPassword.classList.add('hidden');
-    if (sessionTokenText) sessionTokenText.textContent = '';
-    if (sessionPasswordText) sessionPasswordText.textContent = '';
+    if (sessionExpiryDiv) sessionExpiryDiv.classList.add('hidden');
+    if (sessionTokenField) sessionTokenField.textContent = '';
+    if (sessionPasswordField) sessionPasswordField.textContent = '';
+    if (sessionExpiryText) sessionExpiryText.textContent = '';
   });
 
   ws.addEventListener('error', (err) => {
@@ -183,4 +192,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // buttons
   if (createSessionBtn) createSessionBtn.addEventListener('click', createSession);
   if (closeSessionBtn) closeSessionBtn.addEventListener('click', closeSessionBtnPressed);
+  if (copySessionTokenValueBtn) copySessionTokenValueBtn.addEventListener('click', () => { if (sessionTokenField) navigator.clipboard.writeText(sessionTokenField.value) });
+  if (copySessionPasswordValueBtn) copySessionPasswordValueBtn.addEventListener('click', () => { if (sessionPasswordField) navigator.clipboard.writeText(sessionPasswordField.value) });
+
+  if (togglePasswordBtn) togglePasswordBtn.addEventListener('click', () => {
+    if (sessionPasswordField.type === 'password') { sessionPasswordField.type = 'text'; togglePasswordBtn.textContent = window.i18n.t('hide'); }
+    else { sessionPasswordField.type = 'password'; togglePasswordBtn.textContent = window.i18n.t('show'); }
+  });
 });

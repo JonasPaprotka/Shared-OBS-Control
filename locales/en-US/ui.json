@@ -28,5 +28,9 @@
   "client_id_label": "Client ID:",
   "obs_websocker_connection": "OBS Websocket Connection",
   "obs_websocket_password": "Password:",
-  "connect": "Connect"
+  "connect": "Connect",
+  "session_expiry_label": "Expiry:",
+  "copy_btn": "Copy",
+  "show": "Show",
+  "hide": "Hide"
 }

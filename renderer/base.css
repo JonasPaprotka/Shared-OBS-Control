@@ -1,0 +1,47 @@
+:root {
+    --color-scrollbar-track: #1e293b; /* Scrollbar track */
+    --color-scrollbar-thumb: #384454; /* Scrollbar color */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+
+img, a {
+    -webkit-user-drag: none;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#titlebar-container {
+    flex: 0 0 auto;
+    width: 100%;
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 40px;
+}
+
+body > div:not(#titlebar-container) {
+    margin-top: 40px;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
+}
