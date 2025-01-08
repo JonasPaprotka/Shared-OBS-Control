@@ -65,16 +65,6 @@
 
       <!-- Connections -->
       <div id="connections-info" class="space-y-6">
-        <!-- OBS WebSocket Status -->
-        <div id="obs-status-info" class="bg-slate-700 p-6 rounded shadow-lg">
-          <h2 class="text-xl font-bold mb-4">OBS WebSocket Status</h2>
-          <div id="obs-status" class="text-sm">
-            <span>OBS WebSocket:</span>
-            <span id="obs-status-text" class="font-bold text-red-500">Not Connected</span>
-          </div>
-        </div>
-
-        <!-- Client Connections -->
         <div id="client-connections-info" class="bg-slate-700 p-6 rounded shadow-lg">
           <h2 class="text-xl font-bold mb-4">Client Connections</h2>
           <div id="client-connections" class="h-40 overflow-y-auto bg-slate-800 p-2 rounded text-sm"></div>
@@ -91,8 +81,17 @@
         <input type="password" id="obs-websocket-password" required class="w-full px-4 py-2 mb-4 bg-slate-800 border border-slate-600 rounded"/>
 
         <div class="text-center">
-          <button id="connect-obs-websocket-btn" class="px-4 py-2 bg-blue-600 font-semibold rounded hover:bg-blue-700 transition"
+          <button id="connect-obs-websocket-btn" class="px-4 py-2 bg-red-600 font-semibold rounded hover:bg-red-700 transition"
           data-lang="connect">Connect</button>
+        </div>
+      </div>
+
+      <!-- OBS WebSocket Status -->
+      <div id="obs-status-info" class="bg-slate-700 p-6 rounded shadow-lg">
+        <h2 class="text-xl font-bold mb-4">OBS WebSocket Status</h2>
+        <div id="obs-status" class="text-sm">
+          <span>OBS WebSocket:</span>
+          <span id="obs-status-text" class="font-bold text-red-500">Not Connected</span>
         </div>
       </div>
 
