@@ -31,14 +31,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // button mgt
   const shareObsControlBtn = document.getElementById('share_obs_control_btn');
-  if (shareObsControlBtn) shareObsControlBtn.addEventListener('click', () => { location.href='obs-share-control.html' });
+  if (shareObsControlBtn) shareObsControlBtn.addEventListener('click', () => { location.href = 'obs-share-control.html' });
 
   const controlObsBtn = document.getElementById('control_obs_btn');
-  if (controlObsBtn) controlObsBtn.addEventListener('click', () => { location.href='obs-controller-login.html' });
+  if (controlObsBtn) controlObsBtn.addEventListener('click', () => { location.href = 'obs-controller-login.html' });
 
   const navHomeBtn = document.getElementById('nav-home');
   if (navHomeBtn) navHomeBtn.addEventListener('click', () => {
     if (location.href.endsWith('index.html')) return;
-    location.href='index.html'
+    location.href = 'index.html'
   });
 });

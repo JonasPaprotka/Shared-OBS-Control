@@ -144,9 +144,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (joinSessionBtn) joinSessionBtn.addEventListener('click', joinSession);
   if (sendActionBtn) sendActionBtn.addEventListener('click', () => {
-      const selectedAction = actionSelect.value;
-      sendSelectedAction(selectedAction);
-    });
+    const selectedAction = actionSelect.value;
+    sendSelectedAction(selectedAction);
+  });
 });
 
 function obsController_btn_pressed() {
