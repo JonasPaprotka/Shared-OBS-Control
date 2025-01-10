@@ -15,13 +15,26 @@
 
     <!-- Left Column -->
     <div class="flex-1 space-y-6">
-      <!-- Join Session -->
       <div id="join-form" class="bg-slate-700 p-6 rounded shadow-lg">
+
+        <!-- Join Session Title -->
         <h2 class="text-xl font-bold mb-4" data-lang="join_session">Join Session</h2>
-        <label for="session-token" class="block font-semibold mb-2" data-lang="session_token">Session Token:</label>
-        <input type="text" id="session-token" required class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded"/>
-        <label for="session-password" class="block font-semibold mb-2" data-lang="password">Password:</label>
-        <input type="password" id="session-password" required class="w-full px-4 py-2 mb-4 bg-slate-800 text-white border border-slate-600 rounded"/>
+
+        <!-- Session Token -->
+        <div class="mb-4">
+          <label for="session-token" class="block font-semibold mb-2" data-lang="session_token">Session Token:</label>
+          <input type="text" id="session-token" required class="w-full px-4 py-2 bg-slate-800 text-white border border-slate-600 rounded truncate"/>
+        </div>
+
+        <!-- Session Password -->
+        <div class="mb-4">
+          <label for="session-password" class="block font-semibold mb-2" data-lang="password">Password:</label>
+          <div class="flex items-center">
+            <input type="password" id="session-password" required class="flex-1 px-4 py-2 bg-slate-800 border border-slate-600 rounded text-sm text-gray-300"/>
+            <button id="toggle-password-visibility-btn" class="ml-2 px-3 py-2 bg-gray-600 font-semibold text-sm rounded hover:bg-gray-700 transition"
+            data-lang="show">Show</button>
+          </div>
+        </div>
 
         <div class="text-center">
           <button id="join-session-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"

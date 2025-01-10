@@ -50,8 +50,8 @@ function createMainWindow(appLocale) {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 675,
-    minWidth: 1200,
-    minHeight: 675,
+    minWidth: 675,
+    minHeight: 400,
     roundedCorners: true,
     frame: false,
     icon: path.join(__dirname, 'assets', 'icons', 'icon.ico'),

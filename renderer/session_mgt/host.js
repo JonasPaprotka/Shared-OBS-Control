@@ -2,6 +2,7 @@ let encryptedToken = null;
 let generatedPassword = null;
 let ws = null;
 let hostClientId = null;
+let connectedClients = [];
 
 const SESSION_SERVER_URL = 'https://open-session-server-production.up.railway.app';
 
@@ -18,6 +19,7 @@ const hostLogs = document.getElementById('host-logs');
 const sessionExpiryDiv = document.getElementById('session-expiry-div');
 const sessionExpiryText = document.getElementById('session-expiry-text');
 const togglePasswordBtn = document.getElementById('toggle-password-visibility-btn');
+const clientConnectionsDiv = document.getElementById('client-connections');
 
 function logHost(message) {
   if (!hostLogs) return;
@@ -110,6 +112,25 @@ function startHostWebSocket() {
         sessionExpiryDiv.classList.remove('hidden');
       }
 
+      if (data.type === 'clientList') {
+        connectedClients = data.clients || [];
+        updateClientConnectionsList();
+      }
+
+      if (data.type === 'clientConnected') {
+        connectedClients.push(data.clientId);
+        updateClientConnectionsList();
+        logHost(`Client connected: ${data.clientId}`);
+      }
+
+      if (data.type === 'clientDisconnected') {
+        connectedClients = connectedClients.filter(
+          (clientId) => clientId !== data.clientId
+        );
+        updateClientConnectionsList();
+        logHost(`Client disconnected: ${data.clientId}`);
+      }
+
       window.actionAPI.handleActionMessage(data, {
         onAction: (action, payload) => {
           logHost(`Received action: ${action} with payload: ${JSON.stringify(payload)}`);
@@ -149,6 +170,9 @@ function startHostWebSocket() {
     sessionTokenField.textContent = '';
     sessionPasswordField.textContent = '';
     sessionExpiryText.textContent = '';
+
+    connectedClients = [];
+    updateClientConnectionsList();
   });
 
   ws.addEventListener('error', (err) => {
@@ -185,6 +209,18 @@ async function closeSessionBtnPressed() {
   }
 }
 
+function updateClientConnectionsList() {
+  const clientConnectionsDiv = document.getElementById('client-connections');
+  clientConnectionsDiv.innerHTML = '';
+
+  connectedClients.forEach((clientId) => {
+    const item = document.createElement('div');
+    item.classList.add('mb-1', 'selectable');
+    item.innerText = `Client: ${clientId}`;
+    clientConnectionsDiv.appendChild(item);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   await window.i18n.load();
   setStatus(window.i18n.t('session_status_closed'));
@@ -192,11 +228,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // buttons
   createSessionBtn.addEventListener('click', createSession);
   closeSessionBtn.addEventListener('click', closeSessionBtnPressed);
-  copySessionTokenValueBtn.addEventListener('click', () => { if (sessionTokenField) navigator.clipboard.writeText(sessionTokenField.value) });
-  copySessionPasswordValueBtn.addEventListener('click', () => { if (sessionPasswordField) navigator.clipboard.writeText(sessionPasswordField.value) });
+  copySessionTokenValueBtn.addEventListener('click', () => { navigator.clipboard.writeText(sessionTokenField.value) });
+  copySessionPasswordValueBtn.addEventListener('click', () => { navigator.clipboard.writeText(sessionPasswordField.value) });
 
   togglePasswordBtn.addEventListener('click', () => {
-    if (sessionPasswordField.type === 'password') { sessionPasswordField.type = 'text'; togglePasswordBtn.textContent = window.i18n.t('hide'); }
-    else { sessionPasswordField.type = 'password'; togglePasswordBtn.textContent = window.i18n.t('show'); }
+    if (sessionPasswordField.type === 'password') { sessionPasswordField.type = 'text'; togglePasswordBtn.textContent = window.i18n.t('hide');
+    } else { sessionPasswordField.type = 'password'; togglePasswordBtn.textContent = window.i18n.t('show');}
   });
 });

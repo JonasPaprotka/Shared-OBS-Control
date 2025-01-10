@@ -14,6 +14,7 @@ const clientInformations = document.getElementById('client-informations');
 const clientId = document.getElementById('client-id');
 const sessionExpiryInfromations = document.getElementById('session-expiry-informations');
 const sessionExpiry = document.getElementById('session-expiry');
+const togglePasswordBtn = document.getElementById('toggle-password-visibility-btn');
 
 function logClient(message) {
   if (!clientLogs) return;
@@ -26,10 +27,9 @@ async function joinSession() {
   const sessionToken = sessionTokenInput?.value.trim();
   const sessionPassword = sessionPasswordInput?.value.trim();
 
-  if (!sessionToken || !sessionPassword) {
-    logClient('Token or password missing!');
-    return;
-  }
+  if (!sessionToken) logClient('Session Token missing');
+  if (!sessionPassword) logClient('Session Password missing');
+  if (!sessionToken || !sessionPassword) return;
 
   try {
     logClient('Starting handshake...');
@@ -117,32 +117,11 @@ async function joinSession() {
   }
 }
 
-function sendSelectedAction(selectedAction) {
-  let payload = {};
-
-  if (selectedAction === 'SwitchToScene') {
-    const sceneName = prompt('Enter the scene name:');
-    if (!sceneName) {
-      logClient('Scene name is required');
-      return;
-    }
-    payload.sceneName = sceneName;
-  }
-
-  window.actionAPI.sendAction(selectedAction, payload);
-  logClient(`Sent action: ${selectedAction} with payload: ${JSON.stringify(payload)}`);
-}
-
 function isConnected() {
   if (!ws || ws.readyState !== WebSocket.OPEN) {
     return false;
   }
   return true;
-}
-
-function obsController_btn_pressed() {
-  if (!isConnected()) return;
-  location.href = 'obs-controller.html';
 }
 
 function leaveSession() {
@@ -171,12 +150,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   await window.i18n.load();
 
   const obsController_btn = document.getElementById('obs-controller-btn');
-  obsController_btn.addEventListener('click', obsController_btn_pressed);
+  obsController_btn.addEventListener('click', () => {
+    if (!isConnected()) return;
+    location.href = 'obs-controller.html';
+  });
 
-  joinSessionBtn.addEventListener('click', joinSession);
+  joinSessionBtn.addEventListener('click', await joinSession);
   leaveSessionBtn.addEventListener('click', leaveSession);
-  sendActionBtn.addEventListener('click', () => {
-    const selectedAction = actionSelect.value;
-    sendSelectedAction(selectedAction);
+
+  togglePasswordBtn.addEventListener('click', () => {
+    if (sessionPasswordInput.type === 'password') { sessionPasswordInput.type = 'text'; togglePasswordBtn.textContent = window.i18n.t('hide');
+    } else { sessionPasswordInput.type = 'password'; togglePasswordBtn.textContent = window.i18n.t('show');}
   });
 });
