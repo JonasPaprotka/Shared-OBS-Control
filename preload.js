@@ -1,6 +1,4 @@
 const { contextBridge, ipcRenderer } = require('electron');
-const path = require('path');
-
 const { sendAction, handleActionMessage } = require('./renderer/session_mgt/actionHandler.js');
 const { obsManager } = require('./renderer/obs_mgt/obsManager.js');
 
@@ -39,6 +37,7 @@ contextBridge.exposeInMainWorld('i18n', {
 });
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  getVersion: () => ipcRenderer.invoke('GetVersion'),
   minimize: () => ipcRenderer.send('window-minimize'),
   close: () => ipcRenderer.send('window-close'),
 

@@ -146,7 +146,7 @@ ipcMain.on('window-close', (event) => {
   if (window) window.close();
 });
 
-// Translation handler
+// Translations
 ipcMain.handle('translate', (event, { key }) => {
   const result = i18next.t(key);
   return result;
@@ -154,4 +154,9 @@ ipcMain.handle('translate', (event, { key }) => {
 
 ipcMain.handle('get-resource-bundle', (event, lng) => {
   return i18next.getResourceBundle(lng, 'translation');
+});
+
+// Version
+ipcMain.handle('GetVersion', () => {
+  return app.getVersion();
 });

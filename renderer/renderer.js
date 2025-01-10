@@ -13,6 +13,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     })
     .catch((error) => console.error('Error loading title bar:', error));
 
+  // version text
+  const versionText = document.getElementById('version-text');
+  const appVersion = 'v' + await window.electronAPI.getVersion();
+  if (versionText) versionText.textContent = appVersion;
+
   // language
   let detectedLocale = window.electronAPI.getDetectedLocale() || '';
   let defaultLanguage = detectedLocale.trim() === '' ? 'en' : detectedLocale;

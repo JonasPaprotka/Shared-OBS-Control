@@ -2,7 +2,7 @@ const obsManager = {
   handleAction(action, payload) {
     switch (action) {
       case 'GetVersion':
-        return { version: 'v0.1.0' }; //TODO find better solution
+        return { version: 'NotImplementedYet' };
 
       case 'SwitchToScene':
         const sceneName = payload.sceneName;
