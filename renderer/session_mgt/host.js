@@ -84,6 +84,7 @@ function startHostWebSocket() {
   logHost('Connecting to Session...');
   const wsUrl = SESSION_SERVER_URL.replace('https', 'wss');
   ws = new WebSocket(wsUrl);
+  window.hostWS = ws;
 
   ws.addEventListener('open', () => {
     logHost('Session opened. Authenticating as host...');

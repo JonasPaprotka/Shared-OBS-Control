@@ -86,6 +86,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       //TODO Relevant Events --> Server --> Connected Clients
       window.obsAPI.onEvent('CurrentProgramSceneChanged', (data) => {
         console.log('Switched scenes to:', data.sceneName);
+        if (window.hostWS && window.hostWS.readyState === WebSocket.OPEN) {
+          window.hostWS.send(
+            JSON.stringify({
+              type: 'event',
+              eventName: 'SceneSwitched',
+              payload: {
+                sceneName: data.sceneName,
+              },
+            })
+          );
+        } else {
+          console.log('No open connection to broadcast this event');
+        }
       });
     } catch (error) {
       obsStatusText.textContent = window.i18n.t('error_connecting_to_obs_websocket');
