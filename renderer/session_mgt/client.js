@@ -2,6 +2,7 @@ let ws = null;
 const SESSION_SERVER_URL = 'https://open-session-server-production.up.railway.app';
 
 const joinSessionBtn = document.getElementById('join-session-btn');
+const leaveSessionBtn = document.getElementById('leave-session-btn');
 const actionSelect = document.getElementById('action-select');
 const sendActionBtn = document.getElementById('send-action-btn');
 const clientLogs = document.getElementById('client-logs');
@@ -92,6 +93,9 @@ async function joinSession() {
 
           if (obsController) obsController.classList.remove('hidden');
           if (actionArea) actionArea.classList.remove('hidden');
+
+          if (joinSessionBtn) joinSessionBtn.classList.add('hidden');
+          if (leaveSessionBtn) leaveSessionBtn.classList.remove('hidden');
         }
       } catch (err) {
         logClient(`Parsing error: ${err.message}`);
@@ -136,6 +140,33 @@ function isConnected() {
   return true;
 }
 
+function obsController_btn_pressed() {
+  if (!isConnected()) return;
+  location.href = 'obs-controller.html';
+}
+
+function leaveSession() {
+  if (!isConnected()) return;
+
+  ws.close();
+  ws = null;
+  logClient('Left the session.');
+
+  if (obsController) obsController.classList.add('hidden');
+  if (actionArea) actionArea.classList.add('hidden');
+  if (clientInformations) clientInformations.classList.add('hidden');
+  if (sessionExpiryInfromations) sessionExpiryInfromations.classList.add('hidden');
+
+  if (clientId) clientId.textContent = '';
+  if (sessionExpiry) sessionExpiry.textContent = '';
+
+  if (sessionTokenInput) sessionTokenInput.disabled = false;
+  if (sessionPasswordInput) sessionPasswordInput.disabled = false;
+
+  if (leaveSessionBtn) leaveSessionBtn.classList.add('hidden');
+  if (joinSessionBtn) joinSessionBtn.classList.remove('hidden');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   await window.i18n.load();
 
@@ -143,13 +174,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (obsController_btn) obsController_btn.addEventListener('click', obsController_btn_pressed);
 
   if (joinSessionBtn) joinSessionBtn.addEventListener('click', joinSession);
+  if (leaveSessionBtn) leaveSessionBtn.addEventListener('click', leaveSession);
   if (sendActionBtn) sendActionBtn.addEventListener('click', () => {
     const selectedAction = actionSelect.value;
     sendSelectedAction(selectedAction);
   });
 });
-
-function obsController_btn_pressed() {
-  if (!isConnected()) return;
-  location.href = 'obs-controller.html';
-}

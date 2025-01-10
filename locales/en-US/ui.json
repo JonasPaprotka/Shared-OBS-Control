@@ -37,5 +37,6 @@
   "connected_to_obs": "Connected",
   "password_required": "Password Required",
   "error_connecting_to_obs": "An error occurred during connection.",
-  "obs_websocker_connection": "OBS Websocket Connection"
+  "obs_websocker_connection": "OBS Websocket Connection",
+  "leave_session": "Leave Session"
 }
