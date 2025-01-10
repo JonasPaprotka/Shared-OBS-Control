@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const result = await window.obsAPI.connect(password);
 
-      // Check if the connection was truly successful
+      //TODO Rework Connection-Status
       if (!result || !result.success) {
         if (obsStatusText) {
           obsStatusText.textContent = window.i18n.t('failed_to_connect_to_obs');
@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         obsStatusText.classList.remove('text-red-500', 'text-yellow-500');
       }
 
+      //TODO Relevant Events --> Server --> Connected Clients
       window.obsAPI.onEvent('CurrentProgramSceneChanged', (data) => {
         console.log('Switched scenes to:', data.sceneName);
       });
