@@ -33,10 +33,12 @@
   "show": "Show",
   "hide": "Hide",
   "not_connected_to_obs": "Not Connected",
-  "failed_to_connect_to_obs": "Failed to Connect",
-  "connected_to_obs": "Connected",
   "password_required": "Password Required",
-  "error_connecting_to_obs": "An error occurred during connection.",
   "obs_websocker_connection": "OBS Websocket Connection",
-  "leave_session": "Leave Session"
+  "leave_session": "Leave Session",
+  "disconnect": "Disconnect",
+  "failed_to_disconnect_from_obs_websocket": "Failed to Disconnect",
+  "failed_to_connect_to_obs_websocket": "Failed to Connect",
+  "connected_to_obs_websocket": "Connected",
+  "error_connecting_to_obs_websocket": "An error occurred during connection."
 }

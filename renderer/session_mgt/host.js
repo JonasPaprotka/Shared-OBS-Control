@@ -28,7 +28,7 @@ function logHost(message) {
 
 function setStatus(message) {
   if (message === '') return;
-  if (hostStatusText) hostStatusText.textContent = message;
+  hostStatusText.textContent = message;
 }
 
 function generateRandomPassword(length = 16) {
@@ -42,7 +42,7 @@ function generateRandomPassword(length = 16) {
 
 async function createSession() {
   try {
-    if (createSessionBtn) createSessionBtn.classList.add('hidden');
+    createSessionBtn.classList.add('hidden');
     logHost('Creating a new Host session...');
 
     generatedPassword = generateRandomPassword();
@@ -63,10 +63,10 @@ async function createSession() {
     const data = await response.json();
     encryptedToken = data.encryptedToken;
 
-    if (sessionTokenField) sessionTokenField.value = encryptedToken;
-    if (sessionPasswordField) sessionPasswordField.value = generatedPassword;
-    if (sessionToken) sessionToken.classList.remove('hidden');
-    if (sessionPassword) sessionPassword.classList.remove('hidden');
+    sessionTokenField.value = encryptedToken;
+    sessionPasswordField.value = generatedPassword;
+    sessionToken.classList.remove('hidden');
+    sessionPassword.classList.remove('hidden');
     setStatus(window.i18n.t('session_status_initializing'));
 
     startHostWebSocket();
@@ -105,9 +105,9 @@ function startHostWebSocket() {
 
         logHost('Authenticated. Session is now running');
         setStatus(window.i18n.t('session_status_running'));
-        if (closeSessionBtn) closeSessionBtn.classList.remove('hidden');
-        if (sessionExpiryText) sessionExpiryText.textContent = new Date(data.expiresAt).toLocaleString();
-        if (sessionExpiryDiv) sessionExpiryDiv.classList.remove('hidden');
+        closeSessionBtn.classList.remove('hidden');
+        sessionExpiryText.textContent = new Date(data.expiresAt).toLocaleString();
+        sessionExpiryDiv.classList.remove('hidden');
       }
 
       window.actionAPI.handleActionMessage(data, {
@@ -140,15 +140,15 @@ function startHostWebSocket() {
   ws.addEventListener('close', () => {
     logHost('Session Deleted');
     setStatus(window.i18n.t('session_status_closed'));
-    if (closeSessionBtn) closeSessionBtn.classList.add('hidden');
-    if (createSessionBtn) createSessionBtn.classList.remove('hidden');
+    closeSessionBtn.classList.add('hidden');
+    createSessionBtn.classList.remove('hidden');
 
-    if (sessionToken) sessionToken.classList.add('hidden');
-    if (sessionPassword) sessionPassword.classList.add('hidden');
-    if (sessionExpiryDiv) sessionExpiryDiv.classList.add('hidden');
-    if (sessionTokenField) sessionTokenField.textContent = '';
-    if (sessionPasswordField) sessionPasswordField.textContent = '';
-    if (sessionExpiryText) sessionExpiryText.textContent = '';
+    sessionToken.classList.add('hidden');
+    sessionPassword.classList.add('hidden');
+    sessionExpiryDiv.classList.add('hidden');
+    sessionTokenField.textContent = '';
+    sessionPasswordField.textContent = '';
+    sessionExpiryText.textContent = '';
   });
 
   ws.addEventListener('error', (err) => {
@@ -190,12 +190,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   setStatus(window.i18n.t('session_status_closed'));
 
   // buttons
-  if (createSessionBtn) createSessionBtn.addEventListener('click', createSession);
-  if (closeSessionBtn) closeSessionBtn.addEventListener('click', closeSessionBtnPressed);
-  if (copySessionTokenValueBtn) copySessionTokenValueBtn.addEventListener('click', () => { if (sessionTokenField) navigator.clipboard.writeText(sessionTokenField.value) });
-  if (copySessionPasswordValueBtn) copySessionPasswordValueBtn.addEventListener('click', () => { if (sessionPasswordField) navigator.clipboard.writeText(sessionPasswordField.value) });
+  createSessionBtn.addEventListener('click', createSession);
+  closeSessionBtn.addEventListener('click', closeSessionBtnPressed);
+  copySessionTokenValueBtn.addEventListener('click', () => { if (sessionTokenField) navigator.clipboard.writeText(sessionTokenField.value) });
+  copySessionPasswordValueBtn.addEventListener('click', () => { if (sessionPasswordField) navigator.clipboard.writeText(sessionPasswordField.value) });
 
-  if (togglePasswordBtn) togglePasswordBtn.addEventListener('click', () => {
+  togglePasswordBtn.addEventListener('click', () => {
     if (sessionPasswordField.type === 'password') { sessionPasswordField.type = 'text'; togglePasswordBtn.textContent = window.i18n.t('hide'); }
     else { sessionPasswordField.type = 'password'; togglePasswordBtn.textContent = window.i18n.t('show'); }
   });

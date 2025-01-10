@@ -51,7 +51,7 @@ async function initializeController() {
         const msg = JSON.parse(event.data);
 
         if (msg.type === 'authenticated') {
-          logController('Successfully authenticated with host.');
+          logController('Successfully authenticated with host');
         }
 
         if (msg.type === 'response') {
@@ -65,7 +65,7 @@ async function initializeController() {
     });
 
     ws.addEventListener('close', () => {
-      logController('WebSocket connection closed.');
+      logController('WebSocket connection closed');
     });
 
     ws.addEventListener('error', (err) => {
@@ -85,7 +85,7 @@ function logController(message) {
 
 function sendGetVersion() {
   if (!ws || ws.readyState !== WebSocket.OPEN) {
-    logController('WebSocket is not open.');
+    logController('WebSocket is not open');
     return;
   }
 
@@ -96,7 +96,7 @@ function sendGetVersion() {
 function sendSwitchScene() {
   const sceneName = sceneNameInput?.value.trim();
   if (!sceneName) {
-    logController('Scene name is required.');
+    logController('Scene name is required');
     return;
   }
 
@@ -107,11 +107,6 @@ function sendSwitchScene() {
 document.addEventListener('DOMContentLoaded', () => {
   initializeController();
 
-  if (getVersionBtn) {
-    getVersionBtn.addEventListener('click', sendGetVersion);
-  }
-
-  if (switchSceneBtn) {
-    switchSceneBtn.addEventListener('click', sendSwitchScene);
-  }
+  getVersionBtn.addEventListener('click', sendGetVersion);
+  switchSceneBtn.addEventListener('click', sendSwitchScene);
 });

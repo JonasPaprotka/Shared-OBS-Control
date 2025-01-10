@@ -85,17 +85,17 @@ async function joinSession() {
           logClient('Authenticated');
 
           let clientIdLabel = window.i18n.t('client_id_label') + ' ';
-          if (clientId) clientId.textContent = clientIdLabel + msg.clientId;
-          if (clientInformations) clientInformations.classList.remove('hidden');
+          clientId.textContent = clientIdLabel + msg.clientId;
+          clientInformations.classList.remove('hidden');
 
-          if (sessionExpiry) sessionExpiry.textContent = new Date(msg.expiresAt).toLocaleString();
-          if (sessionExpiryInfromations) sessionExpiryInfromations.classList.remove('hidden');
+          sessionExpiry.textContent = new Date(msg.expiresAt).toLocaleString();
+          sessionExpiryInfromations.classList.remove('hidden');
 
-          if (obsController) obsController.classList.remove('hidden');
-          if (actionArea) actionArea.classList.remove('hidden');
+          obsController.classList.remove('hidden');
+          actionArea.classList.remove('hidden');
 
-          if (joinSessionBtn) joinSessionBtn.classList.add('hidden');
-          if (leaveSessionBtn) leaveSessionBtn.classList.remove('hidden');
+          joinSessionBtn.classList.add('hidden');
+          leaveSessionBtn.classList.remove('hidden');
         }
       } catch (err) {
         logClient(`Parsing error: ${err.message}`);
@@ -105,8 +105,8 @@ async function joinSession() {
     ws.addEventListener('close', () => {
       logClient('Connection closed.');
 
-      if (obsController) obsController.classList.add('hidden');
-      if (clientId) clientId.textContent = '';
+      obsController.classList.add('hidden');
+      clientId.textContent = '';
     });
 
     ws.addEventListener('error', (err) => {
@@ -152,30 +152,30 @@ function leaveSession() {
   ws = null;
   logClient('Left the session.');
 
-  if (obsController) obsController.classList.add('hidden');
-  if (actionArea) actionArea.classList.add('hidden');
-  if (clientInformations) clientInformations.classList.add('hidden');
-  if (sessionExpiryInfromations) sessionExpiryInfromations.classList.add('hidden');
+  obsController.classList.add('hidden');
+  actionArea.classList.add('hidden');
+  clientInformations.classList.add('hidden');
+  sessionExpiryInfromations.classList.add('hidden');
 
-  if (clientId) clientId.textContent = '';
-  if (sessionExpiry) sessionExpiry.textContent = '';
+  clientId.textContent = '';
+   sessionExpiry.textContent = '';
 
-  if (sessionTokenInput) sessionTokenInput.disabled = false;
-  if (sessionPasswordInput) sessionPasswordInput.disabled = false;
+  sessionTokenInput.disabled = false;
+  sessionPasswordInput.disabled = false;
 
-  if (leaveSessionBtn) leaveSessionBtn.classList.add('hidden');
-  if (joinSessionBtn) joinSessionBtn.classList.remove('hidden');
+  leaveSessionBtn.classList.add('hidden');
+  joinSessionBtn.classList.remove('hidden');
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   await window.i18n.load();
 
   const obsController_btn = document.getElementById('obs-controller-btn');
-  if (obsController_btn) obsController_btn.addEventListener('click', obsController_btn_pressed);
+  obsController_btn.addEventListener('click', obsController_btn_pressed);
 
-  if (joinSessionBtn) joinSessionBtn.addEventListener('click', joinSession);
-  if (leaveSessionBtn) leaveSessionBtn.addEventListener('click', leaveSession);
-  if (sendActionBtn) sendActionBtn.addEventListener('click', () => {
+  joinSessionBtn.addEventListener('click', joinSession);
+  leaveSessionBtn.addEventListener('click', leaveSession);
+  sendActionBtn.addEventListener('click', () => {
     const selectedAction = actionSelect.value;
     sendSelectedAction(selectedAction);
   });

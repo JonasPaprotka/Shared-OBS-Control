@@ -76,7 +76,7 @@ contextBridge.exposeInMainWorld('obsAPI', {
   connect: async (password) => {
     try {
       await obs.connect('ws://127.0.0.1:4455', password);
-      return { success: true, message: 'Connected to OBS WebSocket successfully!' };
+      return { success: true, message: 'Connected to OBS Websocket' };
     } catch (error) {
       console.error('Failed to connect to OBS WebSocket:', error);
       return { success: false, message: error.message };
@@ -85,7 +85,7 @@ contextBridge.exposeInMainWorld('obsAPI', {
   disconnect: async () => {
     try {
       await obs.disconnect();
-      return { success: true, message: 'Disconnected from OBS WebSocket.' };
+      return { success: true, message: 'Disconnected from OBS WebSocket' };
     } catch (error) {
       console.error('Error disconnecting from OBS WebSocket:', error);
       return { success: false, message: error.message };
