@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   joinSessionBtn.addEventListener('click', clientJoinSession);
   leaveSessionBtn.addEventListener('click', clientLeaveSession);
 
-  togglePasswordBtn.addEventListener('click', () => {
+  togglePasswordBtn.addEventListener('click', async () => {
     if (sessionPasswordField.type === 'password') {
-      sessionPasswordField.type = 'text'; togglePasswordBtn.textContent = window.i18n.t('hide');
-    } else { sessionPasswordField.type = 'password'; togglePasswordBtn.textContent = window.i18n.t('show') }
+      sessionPasswordField.type = 'text'; togglePasswordBtn.textContent = await window.i18n.t('hide');
+    } else { sessionPasswordField.type = 'password'; togglePasswordBtn.textContent = await window.i18n.t('show') }
   });
 });

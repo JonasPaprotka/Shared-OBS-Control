@@ -9,7 +9,7 @@ let connectedClients = [];
 document.addEventListener('DOMContentLoaded', async () => {
   const loadedValues = await loadHostSessionData();
   if (loadedValues) {
-    inputHostSessionData(loadedValues);
+    await inputHostSessionData(loadedValues);
   }
 
   loadedObsWebsocketPassword = await window.storage.get('obsWebsocket_password');

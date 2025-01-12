@@ -1,6 +1,5 @@
-
 //#region HOST
-async function clearHostSessionStorage(dontClearLogs=true) {
+async function clearHostSessionStorage(dontClearLogs = true) {
   encryptedToken = null;
   sessionId = null;
   ownerKey = null;
@@ -33,7 +32,7 @@ async function loadHostSessionData() {
   }
 }
 
-function inputHostSessionData({ loadedSessionToken, loadedSessionPassword, loadedSessionId, loadedOwnerKey, loadedClientId, loadedHostLogs }) {
+async function inputHostSessionData({ loadedSessionToken, loadedSessionPassword, loadedSessionId, loadedOwnerKey, loadedClientId, loadedHostLogs }) {
   try {
     if (!loadedSessionToken || !loadedSessionPassword || !loadedSessionId || !loadedOwnerKey || !loadedClientId) return false;
 
@@ -61,9 +60,10 @@ function inputHostSessionData({ loadedSessionToken, loadedSessionPassword, loade
         allRows += row;
       }
       hostLogsDiv.innerHTML += allRows;
+      hostLogsDiv.scrollTop = hostLogsDiv.scrollHeight; // scroll to bottom
     }
 
-    setSessionStatus(window.i18n.t('session_status_paused'), warningStatusTextColor);
+    setSessionStatus(await window.i18n.t('session_status_paused'), warningStatusTextColor);
 
     return true;
   } catch (err) {
@@ -75,9 +75,47 @@ function inputHostSessionData({ loadedSessionToken, loadedSessionPassword, loade
 
 //#region CLIENT
 async function clearClientStorage() {
+  sessionToken = null;
+  sessionPassword = null;
+
   await window.storage.remove('client_sessionToken');
-  await window.storage.remove('client_sessionId');
   await window.storage.remove('client_sessionPassword');
-  await window.storage.remove('client_clientId');
+}
+
+async function loadClientSessionData() {
+  try {
+    const loadedSessionToken = await window.storage.get('client_sessionToken');
+    const loadedSessionPassword = await window.storage.get('client_sessionPassword');
+    const loadedClientLogs = await window.storage.get('client_logs');
+
+    return { loadedSessionToken, loadedSessionPassword, loadedClientLogs };
+
+  } catch {
+    return null;
+  }
+}
+
+async function inputClientSessionData({ loadedSessionToken, loadedSessionPassword, loadedClientLogs }) {
+  try {
+    sessionToken = loadedSessionToken;
+    sessionPassword = loadedSessionPassword;
+
+    sessionTokenField.value = sessionToken;
+    sessionPasswordField.value = sessionPassword;
+
+    if (loadedClientLogs) {
+      let allRows = '';
+      for (let row of loadedClientLogs) {
+        allRows += row;
+      }
+      clientLogsDiv.innerHTML += allRows;
+      clientLogsDiv.scrollTop = clientLogsDiv.scrollHeight; // scroll to bottom
+    }
+
+    return true;
+  } catch (err) {
+    console.error("Error inputting session data:", err);
+    return false;
+  }
 }
 //#endregion CLIENT

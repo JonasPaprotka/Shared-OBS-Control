@@ -81,7 +81,7 @@ async function hostCreateSession() {
     sessionPasswordField.value = generatedPassword;
     sessionTokenDiv.classList.remove('hidden');
     sessionPasswordDiv.classList.remove('hidden');
-    setSessionStatus(window.i18n.t('session_status_initializing'), warningStatusTextColor);
+    setSessionStatus(await window.i18n.t('session_status_initializing'), warningStatusTextColor);
 
     hostStartWebSocket();
   } catch (err) {
@@ -115,7 +115,7 @@ function hostStartWebSocket() {
           await window.storage.set('host_clientId', clientId);
 
           log(hostLogsDiv, 'Authenticated. Session is now running.');
-          setSessionStatus(window.i18n.t('session_status_running'), sucessStatusTextColor);
+          setSessionStatus(await window.i18n.t('session_status_running'), sucessStatusTextColor);
           deleteSessionBtn.classList.remove('hidden');
           pauseSessionBtn.classList.remove('hidden');
           sessionExpiryText.textContent = new Date(data.expiresAt).toLocaleString();
@@ -167,17 +167,17 @@ function hostStartWebSocket() {
     onClose: async (wsInstance, event) => {
       if (isPausing) {
         log(hostLogsDiv, 'Session paused');
-        setSessionStatus(window.i18n.t('session_status_paused'), warningStatusTextColor);
+        setSessionStatus(await window.i18n.t('session_status_paused'), warningStatusTextColor);
         isPausing = false;
         return;
       }
 
       if (event.wasClean) {
         log(hostLogsDiv, 'Session Closed');
-        setSessionStatus(window.i18n.t('session_status_closed'), warningStatusTextColor);
+        setSessionStatus(await window.i18n.t('session_status_closed'), warningStatusTextColor);
       } else {
         log(hostLogsDiv, 'Connection Lost');
-        setSessionStatus(window.i18n.t('session_status_connection_failed'), failureStatusTextColor);
+        setSessionStatus(await window.i18n.t('session_status_connection_failed'), failureStatusTextColor);
       }
 
       deleteSessionBtn.classList.add('hidden');
@@ -203,7 +203,7 @@ function hostStartWebSocket() {
 
 async function hostDeleteSession() {
   log(hostLogsDiv, 'Deleting Session...');
-  setSessionStatus(window.i18n.t('session_status_closing'), warningStatusTextColor);
+  setSessionStatus(await window.i18n.t('session_status_closing'), warningStatusTextColor);
 
   if (!clientId || !ownerKey) {
     log(hostLogsDiv, 'Cannot delete session. Missing clientId or ownerKey.');
@@ -225,7 +225,7 @@ async function hostDeleteSession() {
     }
   } catch (err) {
     log(hostLogsDiv, `Error deleting session: ${err.message}`);
-    setSessionStatus(window.i18n.t('session_status_error_deleting'), failureStatusTextColor);
+    setSessionStatus(await window.i18n.t('session_status_error_deleting'), failureStatusTextColor);
   }
 }
 
@@ -293,11 +293,9 @@ async function clientJoinSession() {
             clientId = msg.clientId;
 
             await window.storage.set('client_sessionToken', sessionToken);
-            await window.storage.set('client_sessionId', sessionId);
             await window.storage.set('client_sessionPassword', sessionPassword);
-            await window.storage.set('client_clientId', clientId);
 
-            let clientIdLabel = window.i18n.t('client_id_label') + ' ';
+            let clientIdLabel = await window.i18n.t('client_id_label') + ' ';
             clientIdText.textContent = clientIdLabel + clientId;
             clientInformationsDiv.classList.remove('hidden');
 
@@ -316,7 +314,6 @@ async function clientJoinSession() {
         log(clientLogsDiv, 'Connection closed.');
         obsControllerDiv.classList.add('hidden');
         clientIdText.textContent = '';
-        await clearClientStorage();
       },
       onError: (wsInstance, err) => {
         log(clientLogsDiv, `Session error: ${err.message}`);

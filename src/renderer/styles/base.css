@@ -37,6 +37,11 @@ body {
     height: 40px;
 }
 
+#host-logs,
+#client-logs {
+  scroll-behavior: smooth;
+}
+
 body > div:not(#titlebar-container) {
     margin-top: 40px;
     flex: 1 1 auto;
