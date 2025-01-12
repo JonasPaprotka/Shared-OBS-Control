@@ -40,5 +40,7 @@
   "failed_to_disconnect_from_obs_websocket": "Failed to Disconnect",
   "failed_to_connect_to_obs_websocket": "Failed to Connect",
   "connected_to_obs_websocket": "Connected",
-  "error_connecting_to_obs_websocket": "An error occurred during connection."
+  "error_connecting_to_obs_websocket": "An error occurred during connection.",
+  "continue_session": "Continue Session",
+  "session_status_connection_failed": "Connection Failed"
 }

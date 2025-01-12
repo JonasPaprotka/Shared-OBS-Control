@@ -1,3 +1,8 @@
+// Status Text Colors
+const failureStatusTextColor = 'text-red-500';
+const sucessStatusTextColor = 'text-green-500';
+const warningStatusTextColor = 'text-yellow-500';
+
 document.addEventListener('DOMContentLoaded', async () => {
   // titlebar rendering
   fetch('titlebar.html')

@@ -22,6 +22,9 @@
 
         <button id="close-session-btn" class="px-5 py-2 bg-red-600 font-semibold rounded hover:bg-red-700 transition hidden"
         data-lang="close_session">Close Session</button>
+
+        <button id="continue-session-btn" class="px-5 py-2 bg-green-600 font-semibold rounded hover:bg-green-700 transition hidden"
+        data-lang="continue_session">Continue Session</button>
       </div>
 
       <!-- Session Info -->
@@ -45,6 +48,7 @@
             <input id="session-password-field" type="password" class="flex-1 px-4 py-2 bg-slate-800 border border-slate-600 rounded text-sm text-gray-300" readonly/>
             <button id="toggle-password-visibility-btn" class="ml-2 px-3 py-2 bg-gray-600 font-semibold text-sm rounded hover:bg-gray-700 transition"
             data-lang="show">Show</button>
+
             <button id="copy-session-password-btn" class="ml-2 px-3 py-2 bg-blue-600 font-semibold text-sm rounded hover:bg-blue-700 transition"
             data-lang="copy_btn">Copy</button>
           </div>
@@ -106,7 +110,10 @@
   </div>
 
   <script src="renderer.js"></script>
-  <script src="session/host.js"></script>
   <script src="obs/websocketMgt.js"></script>
+  <script src="session/host.js"></script>
+  <script src="session/ui/hostUiMgt.js"></script>
+  <script src="session/sessionConnection.js"></script>
+  <script src="session/sessionStorage.js"></script>
 </body>
 </html>

@@ -57,6 +57,7 @@ function createMainWindow(appLocale) {
     frame: false,
     icon: path.join(__dirname, '../../assets', 'icons', 'icon.ico'),
     webPreferences: {
+      devTools: !app.isPackaged,
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
@@ -129,7 +130,7 @@ app.on('ready', () => {
       app.quit();
     });
 
-    setupStorageIpc(app);
+  setupStorageIpc(app);
 });
 
 app.on('window-all-closed', () => {

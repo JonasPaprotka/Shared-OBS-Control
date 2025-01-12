@@ -1,8 +1,3 @@
-// Status Text Colors
-const failureStatusTextColor = 'text-red-500';
-const sucessStatusTextColor = 'text-green-500';
-const warningStatusTextColor = 'text-yellow-500';
-
 // Connect Btn Colors
 const greenConnectBtnColors = ['bg-green-600', 'hover:bg-green-700'];
 const redConnectBtnColors = ['bg-red-600', 'hover:bg-red-700'];
