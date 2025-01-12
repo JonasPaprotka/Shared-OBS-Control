@@ -1,8 +1,10 @@
 const createSessionBtn = document.getElementById('create-session-btn');
-const closeSessionBtn = document.getElementById('close-session-btn');
+const deleteSessionBtn = document.getElementById('delete-session-btn');
 const continueSessionBtn = document.getElementById('continue-session-btn');
-const copySessionTokenValueBtn = document.getElementById('copy-session-token-btn');
-const copySessionPasswordValueBtn = document.getElementById('copy-session-password-btn');
+const pauseSessionBtn = document.getElementById('pause-session-btn');
+const resumeSessionBtn = document.getElementById('resume-session-btn');
+const copySessionTokenBtn = document.getElementById('copy-session-token-btn');
+const copySessionPasswordBtn = document.getElementById('copy-session-password-btn');
 const togglePasswordBtn = document.getElementById('toggle-password-visibility-btn');
 
 const sessionTokenField = document.getElementById('session-token-field');
@@ -50,14 +52,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // buttons
   createSessionBtn.addEventListener('click', hostCreateSession);
-  closeSessionBtn.addEventListener('click', hostDeleteSession);
+  deleteSessionBtn.addEventListener('click', hostDeleteSession);
   continueSessionBtn.addEventListener('click', hostContinueSession);
-  copySessionTokenValueBtn.addEventListener('click', () => { navigator.clipboard.writeText(sessionTokenField.value) });
-  copySessionPasswordValueBtn.addEventListener('click', () => { navigator.clipboard.writeText(sessionPasswordField.value) });
+  copySessionTokenBtn.addEventListener('click', () => { navigator.clipboard.writeText(sessionTokenField.value) });
+  copySessionPasswordBtn.addEventListener('click', () => { navigator.clipboard.writeText(sessionPasswordField.value) });
 
   togglePasswordBtn.addEventListener('click', () => {
     if (sessionPasswordField.type === 'password') {
       sessionPasswordField.type = 'text'; togglePasswordBtn.textContent = window.i18n.t('hide');
     } else { sessionPasswordField.type = 'password'; togglePasswordBtn.textContent = window.i18n.t('show'); }
+  });
+
+  pauseSessionBtn.addEventListener('click', () => {
+    pauseSessionBtn.classList.add('hidden');
+    resumeSessionBtn.classList.remove('hidden');
+  });
+
+  resumeSessionBtn.addEventListener('click', () => {
+    resumeSessionBtn.classList.add('hidden');
+    pauseSessionBtn.classList.remove('hidden');
   });
 });

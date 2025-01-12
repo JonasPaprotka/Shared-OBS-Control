@@ -11,16 +11,7 @@ function generateRandomPassword(length = 16) {
   return result;
 }
 
-function createWebSocket({
-  encryptedToken,
-  password,
-  role,
-  ownerKey,
-  onOpen,
-  onMessage,
-  onClose,
-  onError,
-}) {
+function createWebSocket({encryptedToken, password, role, ownerKey, onOpen, onMessage, onClose, onError}) {
   const wsUrl = SESSION_SERVER_URL.replace('https', 'wss');
   const ws = new WebSocket(wsUrl);
 
@@ -125,7 +116,8 @@ function hostStartWebSocket() {
 
           log(hostLogsDiv, 'Authenticated. Session is now running.');
           setStatus(window.i18n.t('session_status_running'), sucessStatusTextColor);
-          closeSessionBtn.classList.remove('hidden');
+          deleteSessionBtn.classList.remove('hidden');
+          pauseSessionBtn.classList.remove('hidden');
           sessionExpiryText.textContent = new Date(data.expiresAt).toLocaleString();
           sessionExpiryDiv.classList.remove('hidden');
           return;
@@ -181,7 +173,8 @@ function hostStartWebSocket() {
         setStatus(window.i18n.t('session_status_connection_failed'), failureStatusTextColor);
       }
 
-      closeSessionBtn.classList.add('hidden');
+      deleteSessionBtn.classList.add('hidden');
+      pauseSessionBtn.classList.add('hidden');
       createSessionBtn.classList.remove('hidden');
 
       sessionTokenDiv.classList.add('hidden');
