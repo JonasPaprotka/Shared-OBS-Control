@@ -230,6 +230,8 @@ async function hostDeleteSession() {
 }
 
 function hostPauseSession() {
+  if (!ws) return;
+
   isPausing = true;
   log(hostLogsDiv, 'Pausing session...');
   if (ws) {

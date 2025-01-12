@@ -139,6 +139,15 @@ app.on('window-all-closed', () => {
   }
 });
 
+// Pause session on close
+app.on('close', (e) => {
+  if (app.webContents.getURL().endsWith('sessionHost.html')) {
+    app.webContents.executeJavaScript(
+      'hostPauseSession();'
+    );
+  }
+});
+
 // Title bar
 ipcMain.on('window-minimize', (event) => {
   const window = BrowserWindow.fromWebContents(event.sender);

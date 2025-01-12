@@ -36,6 +36,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const navHomeBtn = document.getElementById('nav-home');
   if (navHomeBtn) navHomeBtn.addEventListener('click', () => {
+
+    // Pause session when nav-home
+    if (location.href.endsWith('sessionHost.html')) {
+      if (typeof pauseSession === 'function') {
+        hostPauseSession();
+      }
+    }
     if (location.href.endsWith('index.html')) return;
     location.href = 'index.html'
   });
