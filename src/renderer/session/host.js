@@ -11,4 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (loadedValues) {
     inputHostSessionData(loadedValues);
   }
+
+  loadedObsWebsocketPassword = await window.storage.get('obsWebsocket_password');
+  if (loadedObsWebsocketPassword) obsWebsocketPasswordField.value = loadedObsWebsocketPassword;
 });

@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       setObsWebsocketStatus(await window.i18n.t('connected_to_obs_websocket'), sucessStatusTextColor);
       toggleObsWebsocketConnectionButton();
+      await window.storage.set('obsWebsocket_password', password);
 
       //TODO Subs. to all relevant events
       window.obsAPI.onEvent('CurrentProgramSceneChanged', (data) => {

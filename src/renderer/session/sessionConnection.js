@@ -87,7 +87,7 @@ async function hostCreateSession() {
   } catch (err) {
     log(hostLogsDiv, `Error creating session: ${err.message}`);
     createSessionBtn.classList.remove('hidden');
-    await clearHostStorage();
+    await clearHostSessionStorage();
   }
 }
 
@@ -193,7 +193,7 @@ function hostStartWebSocket() {
       connectedClients = [];
       updateClientConnectionsList();
 
-      await clearHostStorage();
+      await clearHostSessionStorage();
     },
     onError: (wsInstance, err) => {
       log(hostLogsDiv, `WebSocket error: ${err.message}`);

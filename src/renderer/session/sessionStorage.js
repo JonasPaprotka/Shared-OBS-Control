@@ -1,18 +1,6 @@
 
 //#region HOST
-async function setObsWebsocketPassword(password) {
-  const pwd = password.trim();
-  if (pwd === '') return false;
-
-  await window.storage.set('obsWebsocket_Password', pwd);
-}
-
-async function getSavedObsWebsocketPassword() {
-  const pwd = await window.storage.get('obsWebsocket_Password');
-  if (pwd) return pwd;
-}
-
-async function clearHostSessionStorage() {
+async function clearHostSessionStorage(dontClearLogs=true) {
   encryptedToken = null;
   sessionId = null;
   ownerKey = null;
@@ -23,6 +11,8 @@ async function clearHostSessionStorage() {
   await window.storage.remove('host_sessionId');
   await window.storage.remove('host_ownerKey');
   await window.storage.remove('host_clientId');
+
+  if (dontClearLogs) return;
   await window.storage.remove('host_logs');
 }
 
