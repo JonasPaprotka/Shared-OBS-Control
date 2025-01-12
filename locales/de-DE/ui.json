@@ -1,6 +1,6 @@
 {
-  "share_obs_control": "Share OBS Control",
-  "control_obs": "Control OBS",
+  "share_obs_control": "OBS Kontrolle teilen",
+  "control_obs": "OBS steuern",
   "update_dialog_title": "App Aktualisierung",
   "update_dialog_message": "Version {{version}} ist bereit zur Installation.",
   "update_dialog_detail": "Das Update wird nach dem Neustart der Anwendung angewendet.",
