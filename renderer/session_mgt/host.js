@@ -1,7 +1,9 @@
 let encryptedToken = null;
 let generatedPassword = null;
+let sessionId = null;
+let ownerKey = null;
 let ws = null;
-let hostClientId = null;
+let clientId = null;
 let connectedClients = [];
 
 const SESSION_SERVER_URL = 'https://open-session-server-production.up.railway.app';
@@ -64,6 +66,14 @@ async function createSession() {
 
     const data = await response.json();
     encryptedToken = data.encryptedToken;
+    sessionId = data.sessionId;
+    ownerKey = data.ownerKey;
+
+    await window.storage.set('host_sessionToken', encryptedToken);
+    await window.storage.set('host_sessionPassword', generatedPassword);
+    await window.storage.set('host_sessionId', sessionId);
+    await window.storage.set('host_ownerKey', ownerKey);
+    await window.storage.set('host_clientId', clientId);
 
     sessionTokenField.value = encryptedToken;
     sessionPasswordField.value = generatedPassword;
@@ -75,6 +85,8 @@ async function createSession() {
   } catch (err) {
     logHost(`Error creating session: ${err.message}`);
     if (createSessionBtn) createSessionBtn.classList.remove('hidden');
+
+    await clearHostStorage();
   }
 }
 
@@ -104,7 +116,7 @@ function startHostWebSocket() {
       const data = JSON.parse(event.data);
 
       if (data.type === 'authenticated') {
-        hostClientId = data.clientId;
+        clientId = data.clientId;
 
         logHost('Authenticated. Session is now running');
         setStatus(window.i18n.t('session_status_running'));
@@ -185,8 +197,8 @@ async function closeSessionBtnPressed() {
   logHost('Closing Session...');
   setStatus(window.i18n.t('session_status_closing'));
 
-  if (!hostClientId) {
-    logHost('No hostClientId found – cannot delete session.');
+  if (!clientId || !ownerKey) {
+    logHost('Cannot delete session.');
     return;
   }
 
@@ -194,7 +206,7 @@ async function closeSessionBtnPressed() {
     const response = await fetch(`${SESSION_SERVER_URL}/api/delete`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ clientId: hostClientId }),
+      body: JSON.stringify({ clientId: clientId, ownerKey: ownerKey })
     });
 
     if (!response.ok) {
@@ -204,6 +216,9 @@ async function closeSessionBtnPressed() {
     if (ws) {
       ws.close();
     }
+
+    await clearHostStorage();
+
   } catch (err) {
     logHost(`Error deleting session: ${err.message}`);
     setStatus(window.i18n.t('session_status_error_deleting'));
@@ -222,6 +237,14 @@ function updateClientConnectionsList() {
   });
 }
 
+async function clearHostStorage() {
+  await window.storage.remove('host_sessionToken');
+  await window.storage.remove('host_sessionPassword');
+  await window.storage.remove('host_sessionId');
+  await window.storage.remove('host_ownerKey');
+  await window.storage.remove('host_clientId');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   await window.i18n.load();
   setStatus(window.i18n.t('session_status_closed'));
@@ -233,7 +256,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   copySessionPasswordValueBtn.addEventListener('click', () => { navigator.clipboard.writeText(sessionPasswordField.value) });
 
   togglePasswordBtn.addEventListener('click', () => {
-    if (sessionPasswordField.type === 'password') { sessionPasswordField.type = 'text'; togglePasswordBtn.textContent = window.i18n.t('hide');
-    } else { sessionPasswordField.type = 'password'; togglePasswordBtn.textContent = window.i18n.t('show');}
+    if (sessionPasswordField.type === 'password') {
+      sessionPasswordField.type = 'text'; togglePasswordBtn.textContent = window.i18n.t('hide');
+    } else { sessionPasswordField.type = 'password'; togglePasswordBtn.textContent = window.i18n.t('show'); }
   });
 });

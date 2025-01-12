@@ -23,7 +23,7 @@
         <!-- Session Token -->
         <div class="mb-4">
           <label for="session-token" class="block font-semibold mb-2" data-lang="session_token">Session Token:</label>
-          <input type="text" id="session-token" required class="w-full px-4 py-2 bg-slate-800 text-white border border-slate-600 rounded truncate"/>
+          <input type="text" id="session-token" required class="w-full px-4 py-2 bg-slate-800 border border-slate-600 rounded truncate"/>
         </div>
 
         <!-- Session Password -->
@@ -37,12 +37,9 @@
         </div>
 
         <div class="text-center">
-          <button id="join-session-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"
+          <button id="join-session-btn" class="px-4 py-2 bg-blue-600 font-semibold rounded hover:bg-blue-700 transition"
           data-lang="join_session">Join Session</button>
-        </div>
-
-        <div class="text-center">
-          <button id="leave-session-btn" class="px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition hidden"
+          <button id="leave-session-btn" class="px-4 py-2 bg-red-600 font-semibold rounded hover:bg-red-700 transition hidden"
           data-lang="leave_session">Leave Session</button>
         </div>
       </div>
@@ -50,7 +47,7 @@
       <!-- Client Informations -->
       <div id="client-informations" class="bg-slate-700 p-6 rounded shadow-lg hidden">
         <h2 class="text-xl font-bold mb-4" data-lang="connection_information">Connection Information</h2>
-        <p id="client-id" class="text-white font-semibold selectable"></p>
+        <p id="client-id" class="font-semibold selectable"></p>
       </div>
 
       <!-- Session Expiry Informations -->
@@ -70,7 +67,7 @@
 
       <!-- OBS Controller -->
       <div id="obs-controller" class="bg-slate-700 p-6 rounded shadow-lg text-center hidden">
-        <button id="obs-controller-btn" class="py-4 px-8 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition" data-lang="obs_controller">OBS Controller</button>
+        <button id="obs-controller-btn" class="py-4 px-8 bg-green-600 font-semibold rounded hover:bg-green-700 transition" data-lang="obs_controller">OBS Controller</button>
       </div>
     </div>
   </div>

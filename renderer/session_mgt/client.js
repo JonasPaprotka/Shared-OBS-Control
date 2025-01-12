@@ -1,3 +1,4 @@
+let sessionId = null;
 let ws = null;
 const SESSION_SERVER_URL = 'https://open-session-server-production.up.railway.app';
 
@@ -8,10 +9,9 @@ const sendActionBtn = document.getElementById('send-action-btn');
 const clientLogs = document.getElementById('client-logs');
 const sessionTokenInput = document.getElementById('session-token');
 const sessionPasswordInput = document.getElementById('session-password');
-const actionArea = document.getElementById('action-area');
 const obsController = document.getElementById('obs-controller');
 const clientInformations = document.getElementById('client-informations');
-const clientId = document.getElementById('client-id');
+const clientIdField = document.getElementById('client-id');
 const sessionExpiryInfromations = document.getElementById('session-expiry-informations');
 const sessionExpiry = document.getElementById('session-expiry');
 const togglePasswordBtn = document.getElementById('toggle-password-visibility-btn');
@@ -47,9 +47,6 @@ async function joinSession() {
       throw new Error(`Handshake failed with status ${response.status}`);
     }
 
-    const data = await response.json();
-    logClient(`Handshake response: ${JSON.stringify(data)}`);
-
     const wsUrl = SESSION_SERVER_URL.replace('https', 'wss');
     ws = new WebSocket(wsUrl);
 
@@ -65,7 +62,7 @@ async function joinSession() {
       );
     });
 
-    ws.addEventListener('message', (event) => {
+    ws.addEventListener('message', async (event) => {
       try {
         const msg = JSON.parse(event.data);
 
@@ -79,21 +76,30 @@ async function joinSession() {
           onAction: (action, payload) => {
             //TODO
           },
+          onEvent: (eventName, payload) => {
+            logClient(`Event: ${eventName} - ${JSON.stringify(payload)}`);
+          }
         });
 
         if (msg.type === 'authenticated') {
           logClient('Authenticated');
 
+          sessionId = msg.sessionId;
+          clientId = msg.clientId;
+
+          await window.storage.set('client_sessionToken', sessionToken);
+          await window.storage.set('client_sessionId', sessionId);
+          await window.storage.set('client_sessionPassword', sessionPassword);
+          await window.storage.set('client_clientId', clientId);
+
           let clientIdLabel = window.i18n.t('client_id_label') + ' ';
-          clientId.textContent = clientIdLabel + msg.clientId;
+          clientIdField.textContent = clientIdLabel + clientId;
           clientInformations.classList.remove('hidden');
 
           sessionExpiry.textContent = new Date(msg.expiresAt).toLocaleString();
           sessionExpiryInfromations.classList.remove('hidden');
 
           obsController.classList.remove('hidden');
-          actionArea.classList.remove('hidden');
-
           joinSessionBtn.classList.add('hidden');
           leaveSessionBtn.classList.remove('hidden');
         }
@@ -102,11 +108,13 @@ async function joinSession() {
       }
     });
 
-    ws.addEventListener('close', () => {
+    ws.addEventListener('close', async () => {
       logClient('Connection closed.');
 
       obsController.classList.add('hidden');
-      clientId.textContent = '';
+      clientIdField.textContent = '';
+
+      await clearClientStorage();
     });
 
     ws.addEventListener('error', (err) => {
@@ -132,18 +140,25 @@ function leaveSession() {
   logClient('Left the session.');
 
   obsController.classList.add('hidden');
-  actionArea.classList.add('hidden');
   clientInformations.classList.add('hidden');
   sessionExpiryInfromations.classList.add('hidden');
 
-  clientId.textContent = '';
-   sessionExpiry.textContent = '';
+  clientIdField.textContent = '';
+  sessionExpiry.textContent = '';
 
   sessionTokenInput.disabled = false;
   sessionPasswordInput.disabled = false;
-
+  clientInformations.classList.add('hidden');
+  sessionExpiryInfromations.classList.add('hidden');
   leaveSessionBtn.classList.add('hidden');
   joinSessionBtn.classList.remove('hidden');
+}
+
+async function clearClientStorage() {
+  await window.storage.remove('client_sessionToken');
+  await window.storage.remove('client_sessionId');
+  await window.storage.remove('client_sessionPassword');
+  await window.storage.remove('client_clientId');
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -154,12 +169,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!isConnected()) return;
     location.href = 'obs-controller.html';
   });
-
-  joinSessionBtn.addEventListener('click', await joinSession);
+  joinSessionBtn.addEventListener('click', joinSession);
   leaveSessionBtn.addEventListener('click', leaveSession);
-
   togglePasswordBtn.addEventListener('click', () => {
-    if (sessionPasswordInput.type === 'password') { sessionPasswordInput.type = 'text'; togglePasswordBtn.textContent = window.i18n.t('hide');
-    } else { sessionPasswordInput.type = 'password'; togglePasswordBtn.textContent = window.i18n.t('show');}
+    if (sessionPasswordInput.type === 'password') {
+      sessionPasswordInput.type = 'text'; togglePasswordBtn.textContent = window.i18n.t('hide');
+    } else { sessionPasswordInput.type = 'password'; togglePasswordBtn.textContent = window.i18n.t('show') }
   });
 });

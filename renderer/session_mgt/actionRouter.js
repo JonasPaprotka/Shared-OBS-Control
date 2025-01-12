@@ -15,22 +15,35 @@ function sendAction(action, payload = {}) {
 
 function handleActionMessage(data, handlers = {}) {
   if (!data.type) return;
-  const ignoreDataTypes = ['authenticated', 'clientList', 'clientConnected', 'clientDisconnected'];
+
+  const ignoreDataTypes = ['authenticated', 'clientList', 'clientConnected', 'clientDisconnected',];
   if (ignoreDataTypes.includes(data.type)) return;
 
   switch (data.type) {
     case 'response':
-      if (handlers.onResponse) handlers.onResponse(data.action, data.payload);
+      if (handlers.onResponse) {
+        handlers.onResponse(data.action, data.payload);
+      }
       break;
+
     case 'error':
-      if (handlers.onError) handlers.onError(data.error || data.message);
+      if (handlers.onError) {
+        handlers.onError(data.error || data.message);
+      }
       break;
+
     case 'action':
-      if (handlers.onAction) handlers.onAction(data.action, data.payload);
+      if (handlers.onAction) {
+        handlers.onAction(data.action, data.payload);
+      }
       break;
+
     case 'event':
-      console.log(data);
+      if (handlers.onEvent) {
+        handlers.onEvent(data.eventName, data.payload);
+      }
       break;
+
     default:
       console.warn(`Unknown message type: ${data.type}`);
   }

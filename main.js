@@ -4,6 +4,7 @@ const { autoUpdater } = require('electron-updater');
 const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
 const fs = require('fs');
+const { setupStorageIpc } = require('./storage.js');
 
 let mainWindow;
 
@@ -127,6 +128,8 @@ app.on('ready', () => {
       console.error('i18next init error:', err);
       app.quit();
     });
+
+    setupStorageIpc(app);
 });
 
 app.on('window-all-closed', () => {
