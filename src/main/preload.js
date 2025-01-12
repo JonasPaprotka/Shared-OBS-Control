@@ -76,10 +76,10 @@ contextBridge.exposeInMainWorld('storage', {
 
 // OBS Websocket
 const { OBSWebSocket } = require('obs-websocket-js');
-const { obsManager } = require('../renderer/obs/obsManager.js');
+const { obsHostHandler } = require('../renderer/obs/obsHostHandler.js');
 
 const obs = new OBSWebSocket();
-obsManager.init(obs);
+obsHostHandler.init(obs);
 
 contextBridge.exposeInMainWorld('obsAPI', {
   connect: async (password) => {
@@ -108,7 +108,7 @@ const { handleActionMessage, sendAction } = require('../renderer/session/actionR
 contextBridge.exposeInMainWorld('actionAPI', {
   sendAction: (action, payload) => sendAction(action, payload),
   handleActionMessage: (data, handlers) => handleActionMessage(data, handlers),
-  handleObsAction: (action, payload) => obsManager.handleAction(action, payload),
+  handleObsAction: (action, payload) => obsHostHandler.handleAction(action, payload),
 });
 
 contextBridge.exposeInMainWorld('authAPI', {
