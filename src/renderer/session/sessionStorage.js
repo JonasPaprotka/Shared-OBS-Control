@@ -21,42 +21,39 @@ async function loadHostSessionData() {
     const loadedOwnerKey = await window.storage.get('host_ownerKey');
     const loadedClientId = await window.storage.get('host_clientId');
 
-    if (!loadedSessionToken || !loadedSessionPassword || !loadedSessionId || !loadedOwnerKey || !loadedClientId) {
-      return null;
-    }
-
-    return {
-      sessionToken: loadedSessionToken,
-      sessionPassword: loadedSessionPassword,
-      sessionId: loadedSessionId,
-      ownerKey: loadedOwnerKey,
-      clientId: loadedClientId,
-    };
+    if (!loadedSessionToken || !loadedSessionPassword || !loadedSessionId || !loadedOwnerKey || !loadedClientId) return null;
+    return { loadedSessionToken, loadedSessionPassword, loadedSessionId, loadedOwnerKey, loadedClientId };
 
   } catch {
     return null;
   }
 }
 
-function inputHostSessionData({ sessionToken, sessionPassword, sessionId, ownerKey, clientId }) {
+function inputHostSessionData({ loadedSessionToken, loadedSessionPassword, loadedSessionId, loadedOwnerKey, loadedClientId }) {
   try {
-    if (!sessionToken || !sessionPassword || !sessionId || !ownerKey || !clientId) {
+    if (!loadedSessionToken || !loadedSessionPassword || !loadedSessionId || !loadedOwnerKey || !loadedClientId) {
       return false;
     }
 
     createSessionBtn.classList.add('hidden');
-    continueSessionBtn.classList.remove('hidden');
+    deleteSessionBtn.classList.remove('hidden');
+    resumeSessionBtn.classList.remove('hidden');
 
-    encryptedToken = sessionToken;
-    sessionTokenField.value = sessionToken;
-    generatedPassword = sessionPassword;
-    sessionPasswordField.value = sessionPassword;
-    clientId = clientId;
+    encryptedToken = loadedSessionToken;
+    generatedPassword = loadedSessionPassword;
+    sessionId = loadedSessionId;
+    ownerKey = loadedOwnerKey;
+    clientId = loadedClientId;
+
+    sessionTokenField.value = loadedSessionToken;
+    sessionPasswordField.value = loadedSessionPassword;
 
     sessionTokenDiv.classList.remove('hidden');
     sessionPasswordDiv.classList.remove('hidden');
     sessionTokenField.classList.remove('hidden');
     sessionPasswordField.classList.remove('hidden');
+
+    setSessionStatus(window.i18n.t('session_status_paused'), warningStatusTextColor);
 
     return true;
   } catch (err) {

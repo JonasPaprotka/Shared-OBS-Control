@@ -7,8 +7,8 @@ let clientId = null;
 let connectedClients = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // const loadedValues = await loadHostSessionData();
-  // if (loadedValues) {
-  //   inputHostSessionData(loadedValues);
-  // }
+  const loadedValues = await loadHostSessionData();
+  if (loadedValues) {
+    inputHostSessionData(loadedValues);
+  }
 });

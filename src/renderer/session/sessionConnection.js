@@ -233,10 +233,8 @@ function hostPauseSession() {
   isPausing = true;
   log(hostLogsDiv, 'Pausing session...');
   if (ws) {
-    ws.removeEventListener('close', ws.onclose);
     ws.close();
   }
-  setSessionStatus(window.i18n.t('session_status_paused'), warningStatusTextColor);
 }
 
 function hostContinueSession() {
