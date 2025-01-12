@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  // titlebar rendering
+  // Titlebar rendering
   fetch('titlebar.html')
     .then((response) => response.text())
     .then((html) => {
@@ -13,12 +13,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     })
     .catch((error) => console.error('Error loading title bar:', error));
 
-  // version text
+  // Version Text
   const versionText = document.getElementById('version-text');
   const appVersion = 'v' + await window.electronAPI.getVersion();
   if (versionText) versionText.textContent = appVersion;
 
-  // language
+  // Language
   let detectedLocale = window.electronAPI.getDetectedLocale() || '';
   let defaultLanguage = detectedLocale.trim() === '' ? 'en' : detectedLocale;
   defaultLanguage = defaultLanguage.toLowerCase();
@@ -34,15 +34,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  // Home Btn pressed
   const navHomeBtn = document.getElementById('nav-home');
-  if (navHomeBtn) navHomeBtn.addEventListener('click', () => {
+  if (navHomeBtn) navHomeBtn.addEventListener('click', async () => {
 
-    // Pause session when nav-home
+    // Pause session if running
     if (location.href.endsWith('sessionHost.html')) {
-      if (typeof pauseSession === 'function') {
+      if ((typeof hostPauseSession === 'function') && (ws)) {
+        const dialogTitle = await window.i18n.t('pause_session_dialog_title');
+        const dialogMessage = await window.i18n.t('pause_session_dialog_message');
+        const dialogDetail = await window.i18n.t('pause_session_dialog_detail');
+        const dialogButtons = [
+          await window.i18n.t('pause_session_dialog_button_pause_session'),
+          await window.i18n.t('pause_session_dialog_button_cancel')
+        ];
+        const dialogOpts = {
+          type: 'info',
+          title: dialogTitle,
+          message: dialogMessage,
+          detail: dialogDetail,
+          buttons: dialogButtons
+        };
+        const returnValue = await window.dialogAPI.showMessageBox(dialogOpts);
+        if (returnValue.response === 1) return;
         hostPauseSession();
       }
     }
+
+    // Go Home
     if (location.href.endsWith('index.html')) return;
     location.href = 'index.html'
   });

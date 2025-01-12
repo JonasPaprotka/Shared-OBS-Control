@@ -173,3 +173,14 @@ ipcMain.handle('get-resource-bundle', (event, lng) => {
 ipcMain.handle('get-version', () => {
   return app.getVersion();
 });
+
+// Dialog
+ipcMain.handle('show-dialog', async (event, dialogOpts) => {
+  try {
+    const result = await dialog.showMessageBox(dialogOpts);
+    return result;
+  } catch (error) {
+    console.error('Error in dialog handler:', error);
+    throw error;
+  }
+});

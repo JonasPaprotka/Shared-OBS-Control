@@ -71,7 +71,7 @@ contextBridge.exposeInMainWorld('storage', {
 });
 
 
-// obs websocket
+// OBS Websocket
 const { OBSWebSocket } = require('obs-websocket-js');
 const { obsManager } = require('../renderer/obs/obsManager.js');
 
@@ -112,4 +112,17 @@ contextBridge.exposeInMainWorld('authAPI', {
   getSessionData: async () => {
     return await ipcRenderer.invoke('get-session-data');
   },
+});
+
+// Dialog
+contextBridge.exposeInMainWorld('dialogAPI', {
+  showMessageBox: async (dialogOpts) => {
+    try {
+      const result = await ipcRenderer.invoke('show-dialog', dialogOpts);
+      return result;
+    } catch (error) {
+      console.error('Error in dialogAPI.showMessageBox:', error);
+      return null;
+    }
+  }
 });
