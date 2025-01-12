@@ -16,13 +16,6 @@ const clientInformationsDiv = document.getElementById('client-informations');
 const sessionExpiryInfromationsDiv = document.getElementById('session-expiry-informations');
 
 
-function logClient(message) {
-  if (!clientLogsDiv) return;
-  const time = new Date().toLocaleTimeString();
-  clientLogsDiv.innerHTML += `<div class='selectable'>[${time}] ${message}</div>`;
-  clientLogsDiv.scrollTop = clientLogsDiv.scrollHeight;
-}
-
 document.addEventListener('DOMContentLoaded', async () => {
   await window.i18n.load();
 

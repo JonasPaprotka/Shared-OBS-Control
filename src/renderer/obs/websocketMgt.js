@@ -6,18 +6,10 @@ const redConnectBtnColors = ['bg-red-600', 'hover:bg-red-700'];
 document.addEventListener('DOMContentLoaded', async () => {
   await window.i18n.load();
 
-  const hostLogs = document.getElementById('host-logs');
   const connectBtn = document.getElementById('connect-obs-websocket-btn');
   const disconnectBtn = document.getElementById('disconnect-obs-websocket-btn');
   const obsPasswordInput = document.getElementById('obs-websocket-password');
   const obsStatusText = document.getElementById('obs-status-text');
-
-  function logHost(message) {
-    if (!hostLogs) return;
-    const time = new Date().toLocaleTimeString();
-    hostLogs.innerHTML += `<div class='selectable'>[${time}] ${message}</div>`;
-    hostLogs.scrollTop = hostLogs.scrollHeight;
-  }
 
   obsStatusText.textContent = window.i18n.t('not_connected_to_obs');
   obsStatusText.classList.add(warningStatusTextColor);
@@ -34,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   disconnectBtn.addEventListener('click', async () => {
     const result = await window.obsAPI.disconnect();
-    logHost(result.message);
+    log(hostLogsDiv, result.message);
 
     if (!result || !result.success) {
       obsStatusText.textContent = window.i18n.t('failed_to_disconnect_from_obs_websocket');
@@ -64,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
       const result = await window.obsAPI.connect(password);
-      logHost(result.message);
+      log(hostLogsDiv, result.message);
 
       //TODO Rework Connection-Status
       if (!result || !result.success) {

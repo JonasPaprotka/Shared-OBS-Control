@@ -29,13 +29,6 @@ function updateClientConnectionsList() {
   });
 }
 
-function logHost(message) {
-  if (!hostLogsDiv) return;
-  const time = new Date().toLocaleTimeString();
-  hostLogsDiv.innerHTML += `<div class='selectable'>[${time}] ${message}</div>`;
-  hostLogsDiv.scrollTop = hostLogsDiv.scrollHeight;
-}
-
 function setStatus(message, color = null) {
   if (message === '') return;
   hostStatusText.textContent = message;
