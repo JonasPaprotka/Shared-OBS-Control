@@ -1,3 +1,8 @@
+// Status Text Colors
+const failureStatusTextColor = 'text-red-500';
+const sucessStatusTextColor = 'text-green-500';
+const warningStatusTextColor = 'text-yellow-500';
+
 let encryptedToken = null;
 let generatedPassword = null;
 let sessionId = null;
@@ -30,9 +35,17 @@ function logHost(message) {
   hostLogs.scrollTop = hostLogs.scrollHeight;
 }
 
-function setStatus(message) {
+function setStatus(message, color=null) {
   if (message === '') return;
   hostStatusText.textContent = message;
+
+  if (!color) return;
+  hostStatusText.classList.forEach((className) => {
+    if (className.startsWith('text-')) {
+      hostStatusText.classList.remove(className);
+    }
+  });
+  hostStatusText.classList.add(color);
 }
 
 function generateRandomPassword(length = 16) {
@@ -79,7 +92,7 @@ async function createSession() {
     sessionPasswordField.value = generatedPassword;
     sessionToken.classList.remove('hidden');
     sessionPassword.classList.remove('hidden');
-    setStatus(window.i18n.t('session_status_initializing'));
+    setStatus(window.i18n.t('session_status_initializing'), warningStatusTextColor);
 
     startHostWebSocket();
   } catch (err) {
@@ -119,7 +132,7 @@ function startHostWebSocket() {
         clientId = data.clientId;
 
         logHost('Authenticated. Session is now running');
-        setStatus(window.i18n.t('session_status_running'));
+        setStatus(window.i18n.t('session_status_running'), sucessStatusTextColor);
         closeSessionBtn.classList.remove('hidden');
         sessionExpiryText.textContent = new Date(data.expiresAt).toLocaleString();
         sessionExpiryDiv.classList.remove('hidden');
@@ -173,7 +186,7 @@ function startHostWebSocket() {
 
   ws.addEventListener('close', () => {
     logHost('Session Deleted');
-    setStatus(window.i18n.t('session_status_closed'));
+    setStatus(window.i18n.t('session_status_closed'), warningStatusTextColor);
     closeSessionBtn.classList.add('hidden');
     createSessionBtn.classList.remove('hidden');
 
@@ -195,7 +208,7 @@ function startHostWebSocket() {
 
 async function closeSessionBtnPressed() {
   logHost('Closing Session...');
-  setStatus(window.i18n.t('session_status_closing'));
+  setStatus(window.i18n.t('session_status_closing'), warningStatusTextColor);
 
   if (!clientId || !ownerKey) {
     logHost('Cannot delete session.');
@@ -221,7 +234,7 @@ async function closeSessionBtnPressed() {
 
   } catch (err) {
     logHost(`Error deleting session: ${err.message}`);
-    setStatus(window.i18n.t('session_status_error_deleting'));
+    setStatus(window.i18n.t('session_status_error_deleting'), failureStatusTextColor);
   }
 }
 
@@ -247,7 +260,7 @@ async function clearHostStorage() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   await window.i18n.load();
-  setStatus(window.i18n.t('session_status_closed'));
+  setStatus(window.i18n.t('session_status_closed'), warningStatusTextColor);
 
   // buttons
   createSessionBtn.addEventListener('click', createSession);
