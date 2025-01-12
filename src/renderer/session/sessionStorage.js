@@ -1,6 +1,18 @@
 
 //#region HOST
-async function clearHostStorage() {
+async function setObsWebsocketPassword(password) {
+  const pwd = password.trim();
+  if (pwd === '') return false;
+
+  await window.storage.set('obsWebsocket_Password', pwd);
+}
+
+async function getSavedObsWebsocketPassword() {
+  const pwd = await window.storage.get('obsWebsocket_Password');
+  if (pwd) return pwd;
+}
+
+async function clearHostSessionStorage() {
   encryptedToken = null;
   sessionId = null;
   ownerKey = null;
@@ -11,6 +23,7 @@ async function clearHostStorage() {
   await window.storage.remove('host_sessionId');
   await window.storage.remove('host_ownerKey');
   await window.storage.remove('host_clientId');
+  await window.storage.remove('host_logs');
 }
 
 async function loadHostSessionData() {
@@ -20,20 +33,19 @@ async function loadHostSessionData() {
     const loadedSessionId = await window.storage.get('host_sessionId');
     const loadedOwnerKey = await window.storage.get('host_ownerKey');
     const loadedClientId = await window.storage.get('host_clientId');
+    const loadedHostLogs = await window.storage.get('host_logs');
 
     if (!loadedSessionToken || !loadedSessionPassword || !loadedSessionId || !loadedOwnerKey || !loadedClientId) return null;
-    return { loadedSessionToken, loadedSessionPassword, loadedSessionId, loadedOwnerKey, loadedClientId };
+    return { loadedSessionToken, loadedSessionPassword, loadedSessionId, loadedOwnerKey, loadedClientId, loadedHostLogs };
 
   } catch {
     return null;
   }
 }
 
-function inputHostSessionData({ loadedSessionToken, loadedSessionPassword, loadedSessionId, loadedOwnerKey, loadedClientId }) {
+function inputHostSessionData({ loadedSessionToken, loadedSessionPassword, loadedSessionId, loadedOwnerKey, loadedClientId, loadedHostLogs }) {
   try {
-    if (!loadedSessionToken || !loadedSessionPassword || !loadedSessionId || !loadedOwnerKey || !loadedClientId) {
-      return false;
-    }
+    if (!loadedSessionToken || !loadedSessionPassword || !loadedSessionId || !loadedOwnerKey || !loadedClientId) return false;
 
     createSessionBtn.classList.add('hidden');
     deleteSessionBtn.classList.remove('hidden');
@@ -52,6 +64,14 @@ function inputHostSessionData({ loadedSessionToken, loadedSessionPassword, loade
     sessionPasswordDiv.classList.remove('hidden');
     sessionTokenField.classList.remove('hidden');
     sessionPasswordField.classList.remove('hidden');
+
+    if (loadedHostLogs) {
+      let allRows = '';
+      for (let row of loadedHostLogs) {
+        allRows += row;
+      }
+      hostLogsDiv.innerHTML += allRows;
+    }
 
     setSessionStatus(window.i18n.t('session_status_paused'), warningStatusTextColor);
 

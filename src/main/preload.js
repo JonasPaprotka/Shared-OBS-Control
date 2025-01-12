@@ -68,6 +68,9 @@ contextBridge.exposeInMainWorld('storage', {
   clear: async () => {
     return await ipcRenderer.invoke('storage-clear');
   },
+  add: async (key, value) => {
+    return await ipcRenderer.invoke('storage-add', { key, value });
+  }
 });
 
 

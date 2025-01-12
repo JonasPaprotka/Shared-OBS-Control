@@ -12,8 +12,6 @@
   "session_info": "Session Info",
   "session_token": "Session Token:",
   "status": "Status:",
-  "host_logs": "Host Logs",
-  "client_logs": "Client Logs",
   "session_expiry": "Session Expiry",
   "obs_controller": "OBS Controller",
   "session_status_initializing": "Initializing...",
@@ -50,5 +48,6 @@
   "pause_session_dialog_message": "This action will pause the current running session. Do you want to continue?",
   "pause_session_dialog_detail": "You can resume the session later, everything will be saved.",
   "pause_session_dialog_button_pause_session": "Pause Session",
-  "pause_session_dialog_button_cancel": "Cancel"
+  "pause_session_dialog_button_cancel": "Cancel",
+  "logs": "Logs"
 }

@@ -54,6 +54,21 @@ function setupStorageIpc(app) {
     }
   }
 
+  function add(key, value) {
+    try {
+      const storageData = read();
+      if (!Array.isArray(storageData[key])) {
+        storageData[key] = [];
+      }
+      storageData[key].push(value);
+      const success = write(storageData);
+      return success ? { success: true } : { success: false, error: 'Failed to write data' };
+    } catch (err) {
+      console.error('Failed to add to storage:', err);
+      return { success: false, error: err.message };
+    }
+  }
+
   ipcMain.handle('storage-set', async (event, { key, value }) => {
     const storageData = read();
     storageData[key] = value;
@@ -73,6 +88,23 @@ function setupStorageIpc(app) {
   ipcMain.handle('storage-clear', async () => {
     return clear();
   });
+
+  ipcMain.handle('storage-add', async (event, { key, value }) => {
+    try {
+      const storageData = read();
+
+      if (!Array.isArray(storageData[key])) {
+        storageData[key] = [];
+      }
+      storageData[key].push(value);
+      const success = write(storageData);
+      return { success };
+    } catch (err) {
+      console.error('Failed to add to storage:', err);
+      return { success: false, error: err.message };
+    }
+  });
+
 }
 
 module.exports = {
