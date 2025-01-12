@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "displayName": "Shared OBS Control",
   "description": "Allows the user to share control of OBS with other users",
-  "main": "main.js",
+  "main": "./src/main/main.js",
   "scripts": {
     "start": "electron .",
     "build": "electron-builder",
-    "tailwindcss": "npx tailwindcss -i ./renderer/input.css -o ./renderer/output.css --watch",
+    "tailwindcss": "npx tailwindcss -i ./src/renderer/styles/input.css -o ./src/renderer/styles/output.css --watch",
     "dist": "electron-builder --publish=always",
     "updateTranslations": "node scripts/updateTranslations.js"
   },

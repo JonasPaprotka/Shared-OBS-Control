@@ -6,7 +6,7 @@ const acorn = require('acorn');
 
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 const LOCALES_PATH = path.join(PROJECT_ROOT, 'locales', 'en-US', 'ui.json');
-const RENDERER_PATH = path.join(PROJECT_ROOT, 'renderer');
+const SRC_PATH = path.join(PROJECT_ROOT, 'src');
 
 const readJSON = (filePath) => {
   if (fs.existsSync(filePath)) {
@@ -38,7 +38,10 @@ const extractTranslationsFromHTML = (htmlContent) => {
 
 const extractTranslationsFromJS = (jsContent) => {
   const translations = new Set();
-  const ast = acorn.parse(jsContent, { ecmaVersion: 'latest', sourceType: 'module' });
+  const ast = acorn.parse(jsContent, {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+  });
 
   const isI18nCall = (callee) => {
     if (callee.type !== 'MemberExpression') return false;
@@ -53,7 +56,10 @@ const extractTranslationsFromJS = (jsContent) => {
       current = current.object;
     }
 
-    if (current?.type === 'Identifier' && (current.name === 'i18n' || current.name === 'i18next')) {
+    if (
+      current?.type === 'Identifier' &&
+      (current.name === 'i18n' || current.name === 'i18next')
+    ) {
       return true;
     }
 
@@ -74,8 +80,7 @@ const extractTranslationsFromJS = (jsContent) => {
         walk(node.callee);
         break;
       }
-
-      default:
+      default: {
         for (const prop in node) {
           if (node.hasOwnProperty(prop)) {
             const child = node[prop];
@@ -87,6 +92,7 @@ const extractTranslationsFromJS = (jsContent) => {
           }
         }
         break;
+      }
     }
   };
 
@@ -95,10 +101,10 @@ const extractTranslationsFromJS = (jsContent) => {
 };
 
 // MAIN
-const updateSourceTranslations = () => {
-  const htmlPattern = path.join(RENDERER_PATH, '**', '*.html').replace(/\\/g, '/');
-  const jsPattern = path.join(RENDERER_PATH, '**', '*.js').replace(/\\/g, '/');
-  const jsPatternRoot = path.join(PROJECT_ROOT, '**', '*.js').replace(/\\/g, '/');
+function updateSourceTranslations() {
+  const htmlPattern = path.join(SRC_PATH, '**', '*.html').replace(/\\/g, '/');
+  const jsPattern = path.join(SRC_PATH, '**', '*.js').replace(/\\/g, '/');
+  const rootJsPattern = path.join(PROJECT_ROOT, '*.js').replace(/\\/g, '/');
 
   const ignorePatterns = [
     '**/node_modules/**',
@@ -109,9 +115,10 @@ const updateSourceTranslations = () => {
   ];
 
   const htmlFiles = glob.sync(htmlPattern, { ignore: ignorePatterns });
-  const jsFiles = glob
-    .sync(jsPattern, { ignore: ignorePatterns })
-    .concat(glob.sync(jsPatternRoot, { ignore: ignorePatterns }));
+  const jsFiles = [
+    ...glob.sync(jsPattern, { ignore: ignorePatterns }),
+    ...glob.sync(rootJsPattern, { ignore: ignorePatterns })
+  ];
 
   let extractedTranslations = {};
 
@@ -163,6 +170,6 @@ const updateSourceTranslations = () => {
   }
 
   console.log('completed updating translations');
-};
+}
 
 updateSourceTranslations();

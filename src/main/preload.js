@@ -35,7 +35,7 @@ contextBridge.exposeInMainWorld('i18n', {
 });
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  getVersion: () => ipcRenderer.invoke('GetVersion'),
+  getVersion: () => ipcRenderer.invoke('get-version'),
   minimize: () => ipcRenderer.send('window-minimize'),
   close: () => ipcRenderer.send('window-close'),
 
@@ -73,7 +73,7 @@ contextBridge.exposeInMainWorld('storage', {
 
 // obs websocket
 const { OBSWebSocket } = require('obs-websocket-js');
-const { obsManager } = require('./renderer/obs_mgt/obsManager.js');
+const { obsManager } = require('../renderer/obs/obsManager.js');
 
 const obs = new OBSWebSocket();
 obsManager.init(obs);
@@ -100,7 +100,7 @@ contextBridge.exposeInMainWorld('obsAPI', {
 });
 
 
-const { handleActionMessage, sendAction } = require('./renderer/session_mgt/actionRouter.js');
+const { handleActionMessage, sendAction } = require('../renderer/session/actionRouter.js');
 
 contextBridge.exposeInMainWorld('actionAPI', {
   sendAction: (action, payload) => sendAction(action, payload),

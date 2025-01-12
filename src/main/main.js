@@ -20,7 +20,7 @@ function initI18next(userLocale) {
     .use(Backend)
     .init({
       backend: {
-        loadPath: path.join(__dirname, 'locales', '{{lng}}', 'ui.json'),
+        loadPath: path.join(__dirname, '../../locales', '{{lng}}', 'ui.json'),
       },
       lng: userLocale || defaultLanguage,
       fallbackLng: defaultLanguage,
@@ -38,7 +38,7 @@ function getLocaleCode() {
 }
 
 function getSupportedLngs() {
-  const lngPath = path.join(__dirname, 'locales');
+  const lngPath = path.join(__dirname, '../../locales');
   const lngs = fs.readdirSync(lngPath, { withFileTypes: true });
   const supportedLngs = lngs
     .filter((entry) => entry.isDirectory())
@@ -55,7 +55,7 @@ function createMainWindow(appLocale) {
     minHeight: 400,
     roundedCorners: true,
     frame: false,
-    icon: path.join(__dirname, 'assets', 'icons', 'icon.ico'),
+    icon: path.join(__dirname, '../../assets', 'icons', 'icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -65,7 +65,7 @@ function createMainWindow(appLocale) {
     },
   });
 
-  mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, '../renderer', 'index.html'));
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
@@ -160,6 +160,6 @@ ipcMain.handle('get-resource-bundle', (event, lng) => {
 });
 
 // Version
-ipcMain.handle('GetVersion', () => {
+ipcMain.handle('get-version', () => {
   return app.getVersion();
 });
