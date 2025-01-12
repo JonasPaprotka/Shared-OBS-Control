@@ -6,12 +6,16 @@ const resumeSessionBtn = document.getElementById('resume-session-btn');
 const copySessionTokenBtn = document.getElementById('copy-session-token-btn');
 const copySessionPasswordBtn = document.getElementById('copy-session-password-btn');
 const togglePasswordBtn = document.getElementById('toggle-password-visibility-btn');
+const connectObsWebsocketBtn = document.getElementById('connect-obs-websocket-btn');
+const disconnectObsWebsocketBtn = document.getElementById('disconnect-obs-websocket-btn');
 
 const sessionTokenField = document.getElementById('session-token-field');
 const sessionPasswordField = document.getElementById('session-password-field');
+const obsWebsocketPasswordField = document.getElementById('obs-websocket-password');
 
 const hostStatusText = document.getElementById('host-status-text');
 const sessionExpiryText = document.getElementById('session-expiry-text');
+const obsStatusText = document.getElementById('obs-status-text');
 
 const sessionTokenDiv = document.getElementById('session-token');
 const sessionPasswordDiv = document.getElementById('session-password');
@@ -44,11 +48,24 @@ function setSessionStatus(message, color = null) {
   hostStatusText.classList.add(color);
 }
 
+function setObsWebsocketStatus(message, color = null) {
+  if (message === '') return;
+  obsStatusText.textContent = message;
+
+  if (!color) return;
+  obsStatusText.classList.forEach((className) => {
+    if (className.startsWith('text-')) {
+      obsStatusText.classList.remove(className);
+    }
+    obsStatusText.classList.add(color);
+  });
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
   await window.i18n.load();
 
-  setSessionStatus(window.i18n.t('session_status_closed'), warningStatusTextColor);
+  setSessionStatus(await window.i18n.t('session_status_closed'), warningStatusTextColor);
+  setObsWebsocketStatus(await window.i18n.t('not_connected_to_obs'), warningStatusTextColor)
 
   // buttons
   createSessionBtn.addEventListener('click', hostCreateSession);
