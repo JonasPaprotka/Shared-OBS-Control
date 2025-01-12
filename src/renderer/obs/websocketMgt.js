@@ -58,7 +58,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const result = await window.obsAPI.connect(password);
       log(hostLogsDiv, result.message);
 
-      //TODO Rework Connection-Status
       if (!result || !result.success) {
         obsStatusText.textContent = window.i18n.t('failed_to_connect_to_obs_websocket');
         obsStatusText.classList.add(failureStatusTextColor);
@@ -70,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       obsStatusText.classList.add(sucessStatusTextColor);
       obsStatusText.classList.remove(failureStatusTextColor, warningStatusTextColor);
 
-      //TODO Relevant Events --> Server --> Connected Clients
+      //TODO Subs. to all relevant events
       window.obsAPI.onEvent('CurrentProgramSceneChanged', (data) => {
         console.log('Switched scenes to:', data.sceneName);
         if (window.hostWS && window.hostWS.readyState === WebSocket.OPEN) {

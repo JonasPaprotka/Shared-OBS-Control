@@ -1,4 +1,4 @@
-// CONSTANTS
+let isPausing = false;
 const SESSION_SERVER_URL = 'https://open-session-server-production.up.railway.app';
 
 //#region SHARED FUNCTIONS
@@ -11,7 +11,7 @@ function generateRandomPassword(length = 16) {
   return result;
 }
 
-function createWebSocket({encryptedToken, password, role, ownerKey, onOpen, onMessage, onClose, onError}) {
+function createWebSocket({ encryptedToken, password, role, ownerKey, onOpen, onMessage, onClose, onError }) {
   const wsUrl = SESSION_SERVER_URL.replace('https', 'wss');
   const ws = new WebSocket(wsUrl);
 
@@ -81,7 +81,7 @@ async function hostCreateSession() {
     sessionPasswordField.value = generatedPassword;
     sessionTokenDiv.classList.remove('hidden');
     sessionPasswordDiv.classList.remove('hidden');
-    setStatus(window.i18n.t('session_status_initializing'), warningStatusTextColor);
+    setSessionStatus(window.i18n.t('session_status_initializing'), warningStatusTextColor);
 
     hostStartWebSocket();
   } catch (err) {
@@ -115,7 +115,7 @@ function hostStartWebSocket() {
           await window.storage.set('host_clientId', clientId);
 
           log(hostLogsDiv, 'Authenticated. Session is now running.');
-          setStatus(window.i18n.t('session_status_running'), sucessStatusTextColor);
+          setSessionStatus(window.i18n.t('session_status_running'), sucessStatusTextColor);
           deleteSessionBtn.classList.remove('hidden');
           pauseSessionBtn.classList.remove('hidden');
           sessionExpiryText.textContent = new Date(data.expiresAt).toLocaleString();
@@ -165,18 +165,24 @@ function hostStartWebSocket() {
       }
     },
     onClose: async (wsInstance, event) => {
+      if (isPausing) {
+        log(hostLogsDiv, 'Session paused');
+        setSessionStatus(window.i18n.t('session_status_paused'), warningStatusTextColor);
+        isPausing = false;
+        return;
+      }
+
       if (event.wasClean) {
         log(hostLogsDiv, 'Session Closed');
-        setStatus(window.i18n.t('session_status_closed'), warningStatusTextColor);
+        setSessionStatus(window.i18n.t('session_status_closed'), warningStatusTextColor);
       } else {
         log(hostLogsDiv, 'Connection Lost');
-        setStatus(window.i18n.t('session_status_connection_failed'), failureStatusTextColor);
+        setSessionStatus(window.i18n.t('session_status_connection_failed'), failureStatusTextColor);
       }
 
       deleteSessionBtn.classList.add('hidden');
       pauseSessionBtn.classList.add('hidden');
       createSessionBtn.classList.remove('hidden');
-
       sessionTokenDiv.classList.add('hidden');
       sessionPasswordDiv.classList.add('hidden');
       sessionExpiryDiv.classList.add('hidden');
@@ -187,7 +193,7 @@ function hostStartWebSocket() {
       connectedClients = [];
       updateClientConnectionsList();
 
-      await clearHostStorage(); //TODO Deleted or Closed (Paused) Session -> Only clear when deleted
+      await clearHostStorage();
     },
     onError: (wsInstance, err) => {
       log(hostLogsDiv, `WebSocket error: ${err.message}`);
@@ -197,7 +203,7 @@ function hostStartWebSocket() {
 
 async function hostDeleteSession() {
   log(hostLogsDiv, 'Deleting Session...');
-  setStatus(window.i18n.t('session_status_closing'), warningStatusTextColor);
+  setSessionStatus(window.i18n.t('session_status_closing'), warningStatusTextColor);
 
   if (!clientId || !ownerKey) {
     log(hostLogsDiv, 'Cannot delete session. Missing clientId or ownerKey.');
@@ -219,16 +225,18 @@ async function hostDeleteSession() {
     }
   } catch (err) {
     log(hostLogsDiv, `Error deleting session: ${err.message}`);
-    setStatus(window.i18n.t('session_status_error_deleting'), failureStatusTextColor);
+    setSessionStatus(window.i18n.t('session_status_error_deleting'), failureStatusTextColor);
   }
 }
 
 function hostPauseSession() {
-  log(hostLogsDiv, 'Pausing session... (WebSocket closed, but session not deleted)');
+  isPausing = true;
+  log(hostLogsDiv, 'Pausing session...');
   if (ws) {
-    ws.removeEventListener('close', handleClose);
+    ws.removeEventListener('close', ws.onclose);
     ws.close();
   }
+  setSessionStatus(window.i18n.t('session_status_paused'), warningStatusTextColor);
 }
 
 function hostContinueSession() {

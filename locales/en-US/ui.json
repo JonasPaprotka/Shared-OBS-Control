@@ -44,5 +44,6 @@
   "create_session": "Create Session",
   "delete_session": "Delete Session",
   "pause_session": "Pause Session",
-  "resume_session": "Resume Session"
+  "resume_session": "Resume Session",
+  "session_status_paused": "Session Paused"
 }

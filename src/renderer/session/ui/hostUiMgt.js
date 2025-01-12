@@ -31,7 +31,7 @@ function updateClientConnectionsList() {
   });
 }
 
-function setStatus(message, color = null) {
+function setSessionStatus(message, color = null) {
   if (message === '') return;
   hostStatusText.textContent = message;
 
@@ -48,7 +48,7 @@ function setStatus(message, color = null) {
 document.addEventListener('DOMContentLoaded', async () => {
   await window.i18n.load();
 
-  setStatus(window.i18n.t('session_status_closed'), warningStatusTextColor);
+  setSessionStatus(window.i18n.t('session_status_closed'), warningStatusTextColor);
 
   // buttons
   createSessionBtn.addEventListener('click', hostCreateSession);
@@ -66,10 +66,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   pauseSessionBtn.addEventListener('click', () => {
     pauseSessionBtn.classList.add('hidden');
     resumeSessionBtn.classList.remove('hidden');
+    hostPauseSession();
   });
 
   resumeSessionBtn.addEventListener('click', () => {
     resumeSessionBtn.classList.add('hidden');
     pauseSessionBtn.classList.remove('hidden');
+    hostContinueSession();
   });
 });
