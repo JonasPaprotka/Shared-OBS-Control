@@ -1,6 +1,7 @@
 // CONSTANTS
 const SESSION_SERVER_URL = 'https://open-session-server-production.up.railway.app';
 
+//#region SHARED FUNCTIONS
 function generateRandomPassword(length = 16) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -10,28 +11,72 @@ function generateRandomPassword(length = 16) {
   return result;
 }
 
-//#region HOST
-async function createSession() {
+function createWebSocket({
+  encryptedToken,
+  password,
+  role,
+  ownerKey,
+  onOpen,
+  onMessage,
+  onClose,
+  onError,
+}) {
+  const wsUrl = SESSION_SERVER_URL.replace('https', 'wss');
+  const ws = new WebSocket(wsUrl);
+
+  ws.addEventListener('open', () => {
+    onOpen && onOpen(ws);
+
+    // Authenticate
+    const authPayload = {
+      type: 'authenticate',
+      encryptedToken,
+      password,
+      role,
+    };
+    if (role === 'host' && ownerKey) {
+      authPayload.ownerKey = ownerKey;
+    }
+    ws.send(JSON.stringify(authPayload));
+  });
+
+  ws.addEventListener('message', (evt) => {
+    onMessage && onMessage(ws, evt);
+  });
+
+  ws.addEventListener('close', (evt) => {
+    onClose && onClose(ws, evt);
+  });
+
+  ws.addEventListener('error', (err) => {
+    onError && onError(ws, err);
+  });
+
+  return ws;
+}
+
+async function doHandshake(role, password) {
+  const response = await fetch(`${SESSION_SERVER_URL}/api/handshake`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password, role }),
+  });
+  if (!response.ok) {
+    throw new Error(`Handshake failed with status ${response.status}`);
+  }
+  return response.json();
+}
+//#endregion SHARED FUNCTIONS
+
+//#region HOST FUNCTIONS
+async function hostCreateSession() {
   try {
     createSessionBtn.classList.add('hidden');
     log(hostLogsDiv, 'Creating a new Host session...');
 
     generatedPassword = generateRandomPassword();
 
-    const response = await fetch(`${SESSION_SERVER_URL}/api/handshake`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        password: generatedPassword,
-        role: 'host',
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Server responded with status ${response.status}`);
-    }
-
-    const data = await response.json();
+    const data = await doHandshake('host', generatedPassword);
     encryptedToken = data.encryptedToken;
     sessionId = data.sessionId;
     ownerKey = data.ownerKey;
@@ -47,134 +92,122 @@ async function createSession() {
     sessionPasswordDiv.classList.remove('hidden');
     setStatus(window.i18n.t('session_status_initializing'), warningStatusTextColor);
 
-    startHostWebSocket();
+    hostStartWebSocket();
   } catch (err) {
     log(hostLogsDiv, `Error creating session: ${err.message}`);
-    if (createSessionBtn) createSessionBtn.classList.remove('hidden');
-
+    createSessionBtn.classList.remove('hidden');
     await clearHostStorage();
   }
 }
 
-function startHostWebSocket() {
-  if (!encryptedToken || !generatedPassword) return;
+function hostStartWebSocket() {
+  if (!encryptedToken || !generatedPassword) {
+    log(hostLogsDiv, 'Missing token/password for host WS');
+    return;
+  }
 
-  log(hostLogsDiv, 'Connecting to Session...');
-  const wsUrl = SESSION_SERVER_URL.replace('https', 'wss');
-  ws = new WebSocket(wsUrl);
-  window.hostWS = ws;
+  log(hostLogsDiv, 'Connecting to Session as Host...');
+  ws = createWebSocket({
+    encryptedToken,
+    password: generatedPassword,
+    role: 'host',
+    ownerKey: ownerKey,
+    onOpen: (wsInstance) => {
+      log(hostLogsDiv, 'WebSocket open. Sending auth...');
+    },
+    onMessage: async (wsInstance, event) => {
+      try {
+        const data = JSON.parse(event.data);
 
-  ws.addEventListener('open', () => {
-    log(hostLogsDiv, 'Session opened. Authenticating as host...');
+        if (data.type === 'authenticated') {
+          clientId = data.clientId;
+          await window.storage.set('host_clientId', clientId);
 
-    ws.send(
-      JSON.stringify({
-        type: 'authenticate',
-        encryptedToken,
-        password: generatedPassword,
-        role: 'host',
-        ownerKey
-      })
-    );
-  });
+          log(hostLogsDiv, 'Authenticated. Session is now running.');
+          setStatus(window.i18n.t('session_status_running'), sucessStatusTextColor);
+          closeSessionBtn.classList.remove('hidden');
+          sessionExpiryText.textContent = new Date(data.expiresAt).toLocaleString();
+          sessionExpiryDiv.classList.remove('hidden');
+          return;
+        }
 
-  ws.addEventListener('message', async (event) => {
-    try {
-      const data = JSON.parse(event.data);
+        if (data.type === 'clientList') {
+          connectedClients = data.clients || [];
+          updateClientConnectionsList();
+          return;
+        }
 
-      if (data.type === 'authenticated') {
-        clientId = data.clientId;
-        await window.storage.set('host_clientId', clientId);
+        if (data.type === 'clientConnected') {
+          connectedClients.push(data.clientId);
+          updateClientConnectionsList();
+          log(hostLogsDiv, `Client connected: ${data.clientId}`);
+          return;
+        }
 
-        log(hostLogsDiv, 'Authenticated. Session is now running');
-        setStatus(window.i18n.t('session_status_running'), sucessStatusTextColor);
-        closeSessionBtn.classList.remove('hidden');
-        sessionExpiryText.textContent = new Date(data.expiresAt).toLocaleString();
-        sessionExpiryDiv.classList.remove('hidden');
+        if (data.type === 'clientDisconnected') {
+          connectedClients = connectedClients.filter((cid) => cid !== data.clientId);
+          updateClientConnectionsList();
+          log(hostLogsDiv, `Client disconnected: ${data.clientId}`);
+          return;
+        }
+
+        window.actionAPI.handleActionMessage(data, {
+          onAction: (action, payload) => {
+            log(hostLogsDiv, `Received action: ${action} with payload: ${JSON.stringify(payload)}`);
+            const responsePayload = window.actionAPI.handleObsAction(action, payload);
+            wsInstance.send(
+              JSON.stringify({
+                type: 'response',
+                action,
+                clientId: data.clientId,
+                payload: responsePayload,
+              })
+            );
+          },
+          onError: (error) => {
+            log(hostLogsDiv, `Error from client: ${error}`);
+          },
+        });
+      } catch (err) {
+        wsInstance.send(JSON.stringify({ type: 'error', message: 'Invalid message format' }));
+      }
+    },
+    onClose: async (wsInstance, event) => {
+      if (event.wasClean) {
+        log(hostLogsDiv, 'Session Closed');
+        setStatus(window.i18n.t('session_status_closed'), warningStatusTextColor);
+      } else {
+        log(hostLogsDiv, 'Connection Lost');
+        setStatus(window.i18n.t('session_status_connection_failed'), failureStatusTextColor);
       }
 
-      if (data.type === 'clientList') {
-        connectedClients = data.clients || [];
-        updateClientConnectionsList();
-      }
+      closeSessionBtn.classList.add('hidden');
+      createSessionBtn.classList.remove('hidden');
 
-      if (data.type === 'clientConnected') {
-        connectedClients.push(data.clientId);
-        updateClientConnectionsList();
-        log(hostLogsDiv, `Client connected: ${data.clientId}`);
-      }
+      sessionTokenDiv.classList.add('hidden');
+      sessionPasswordDiv.classList.add('hidden');
+      sessionExpiryDiv.classList.add('hidden');
+      sessionTokenField.textContent = '';
+      sessionPasswordField.textContent = '';
+      sessionExpiryText.textContent = '';
 
-      if (data.type === 'clientDisconnected') {
-        connectedClients = connectedClients.filter(
-          (clientId) => clientId !== data.clientId
-        );
-        updateClientConnectionsList();
-        log(hostLogsDiv, `Client disconnected: ${data.clientId}`);
-      }
+      connectedClients = [];
+      updateClientConnectionsList();
 
-      window.actionAPI.handleActionMessage(data, {
-        onAction: (action, payload) => {
-          log(hostLogsDiv, `Received action: ${action} with payload: ${JSON.stringify(payload)}`); //TODO remove
-          const responsePayload = window.actionAPI.handleObsAction(action, payload);
-          ws.send(
-            JSON.stringify({
-              type: 'response',
-              action,
-              clientId: data.clientId,
-              payload: responsePayload,
-            })
-          );
-        },
-        onError: (error) => {
-          log(hostLogsDiv, `Error from client: ${error}`);
-        },
-      });
-    } catch (parseErr) {
-      ws.send(
-        JSON.stringify({
-          type: 'error',
-          message: 'Invalid message format',
-        })
-      );
-    }
-  });
-
-  ws.addEventListener('close', async (event) => {
-    if (event.wasClean) {
-      log(hostLogsDiv, 'Session Closed');
-      setStatus(window.i18n.t('session_status_closed'), warningStatusTextColor);
-    } else {
-      log(hostLogsDiv, 'Connection Failed');
-      setStatus(window.i18n.t('session_status_connection_failed'), failureStatusTextColor);
-    }
-
-    closeSessionBtn.classList.add('hidden');
-    createSessionBtn.classList.remove('hidden');
-
-    sessionTokenDiv.classList.add('hidden');
-    sessionPasswordDiv.classList.add('hidden');
-    sessionExpiryDiv.classList.add('hidden');
-    sessionTokenField.textContent = '';
-    sessionPasswordField.textContent = '';
-    sessionExpiryText.textContent = '';
-
-    connectedClients = [];
-    updateClientConnectionsList();
-
-    await clearHostStorage(); //TODO Deleted or Closed (Paused) Session -> Only clear when deleted
-  });
-
-  ws.addEventListener('error', (err) => {
-    log(hostLogsDiv, `WebSocket error: ${err.message}`);
+      await clearHostStorage(); //TODO Deleted or Closed (Paused) Session -> Only clear when deleted
+    },
+    onError: (wsInstance, err) => {
+      log(hostLogsDiv, `WebSocket error: ${err.message}`);
+    },
   });
 }
 
-async function closeSession() {
-  log(hostLogsDiv, 'Closing Session...');
+async function hostDeleteSession() {
+  log(hostLogsDiv, 'Deleting Session...');
   setStatus(window.i18n.t('session_status_closing'), warningStatusTextColor);
 
   if (!clientId || !ownerKey) {
-    log(hostLogsDiv, 'Cannot delete session.');
+    log(hostLogsDiv, 'Cannot delete session. Missing clientId or ownerKey.');
     return;
   }
 
@@ -182,9 +215,8 @@ async function closeSession() {
     const response = await fetch(`${SESSION_SERVER_URL}/api/delete`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ clientId: clientId, ownerKey: ownerKey })
+      body: JSON.stringify({ clientId, ownerKey }),
     });
-
     if (!response.ok) {
       throw new Error(`Server responded with status ${response.status}`);
     }
@@ -192,18 +224,31 @@ async function closeSession() {
     if (ws) {
       ws.close();
     }
-
-    await clearHostStorage();
-
   } catch (err) {
     log(hostLogsDiv, `Error deleting session: ${err.message}`);
     setStatus(window.i18n.t('session_status_error_deleting'), failureStatusTextColor);
   }
 }
-//#endregion HOST
 
-//#region CLIENT
-async function joinSession() {
+function hostPauseSession() {
+  log(hostLogsDiv, 'Pausing session... (WebSocket closed, but session not deleted)');
+  if (ws) {
+    ws.removeEventListener('close', handleClose);
+    ws.close();
+  }
+}
+
+function hostContinueSession() {
+  if (!encryptedToken || !generatedPassword || !ownerKey) {
+    log(hostLogsDiv, 'Cannot continue session. Missing token, password, or ownerKey.');
+    return;
+  }
+  hostStartWebSocket();
+}
+//#endregion HOST FUNCTIONS
+
+//#region CLIENT FUNCTIONS
+async function clientJoinSession() {
   const sessionToken = sessionTokenField?.value.trim();
   const sessionPassword = sessionPasswordField?.value.trim();
 
@@ -213,108 +258,78 @@ async function joinSession() {
 
   try {
     log(clientLogsDiv, 'Starting handshake...');
+    await doHandshake('client', sessionPassword);
 
-    const response = await fetch(`${SESSION_SERVER_URL}/api/handshake`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        password: sessionPassword,
-        role: 'client',
-      }),
-    });
+    ws = createWebSocket({
+      encryptedToken: sessionToken,
+      password: sessionPassword,
+      role: 'client',
+      onOpen: () => {
+        log(clientLogsDiv, 'Session open. Authenticating as client...');
+      },
+      onMessage: async (wsInstance, event) => {
+        try {
+          const msg = JSON.parse(event.data);
 
-    if (!response.ok) {
-      throw new Error(`Handshake failed with status ${response.status}`);
-    }
+          window.actionAPI.handleActionMessage(msg, {
+            onResponse: (action, payload) => {
+              log(clientLogsDiv, `Response - [${action}]: ${JSON.stringify(payload)}`);
+            },
+            onError: (error) => {
+              log(clientLogsDiv, `Server error: ${error}`);
+            },
+            onAction: (action, payload) => {
+              //TODO
+            },
+            onEvent: (eventName, payload) => {
+              log(clientLogsDiv, `Event: ${eventName} - ${JSON.stringify(payload)}`);
+            },
+          });
 
-    const wsUrl = SESSION_SERVER_URL.replace('https', 'wss');
-    ws = new WebSocket(wsUrl);
+          if (msg.type === 'authenticated') {
+            log(clientLogsDiv, 'Authenticated as Client');
+            sessionId = msg.sessionId;
+            clientId = msg.clientId;
 
-    ws.addEventListener('open', () => {
-      log(clientLogsDiv, 'Session open. Authenticating...');
-      ws.send(
-        JSON.stringify({
-          type: 'authenticate',
-          encryptedToken: sessionToken,
-          password: sessionPassword,
-          role: 'client',
-        })
-      );
-    });
+            await window.storage.set('client_sessionToken', sessionToken);
+            await window.storage.set('client_sessionId', sessionId);
+            await window.storage.set('client_sessionPassword', sessionPassword);
+            await window.storage.set('client_clientId', clientId);
 
-    ws.addEventListener('message', async (event) => {
-      try {
-        const msg = JSON.parse(event.data);
+            let clientIdLabel = window.i18n.t('client_id_label') + ' ';
+            clientIdText.textContent = clientIdLabel + clientId;
+            clientInformationsDiv.classList.remove('hidden');
 
-        window.actionAPI.handleActionMessage(msg, {
-          onResponse: (action, payload) => {
-            log(clientLogsDiv, `Response - [${action}]: ${JSON.stringify(payload)}`); //TODO remove
-          },
-          onError: (error) => {
-            log(clientLogsDiv, `Server error: ${error}`);
-          },
-          onAction: (action, payload) => {
-            //TODO
-          },
-          onEvent: (eventName, payload) => {
-            log(clientLogsDiv, `Event: ${eventName} - ${JSON.stringify(payload)}`);
+            sessionExpiryText.textContent = new Date(msg.expiresAt).toLocaleString();
+            sessionExpiryInfromationsDiv.classList.remove('hidden');
+
+            obsControllerDiv.classList.remove('hidden');
+            joinSessionBtn.classList.add('hidden');
+            leaveSessionBtn.classList.remove('hidden');
           }
-        });
-
-        if (msg.type === 'authenticated') {
-          log(clientLogsDiv, 'Authenticated');
-
-          sessionId = msg.sessionId;
-          clientId = msg.clientId;
-
-          await window.storage.set('client_sessionToken', sessionToken);
-          await window.storage.set('client_sessionId', sessionId);
-          await window.storage.set('client_sessionPassword', sessionPassword);
-          await window.storage.set('client_clientId', clientId);
-
-          let clientIdLabel = window.i18n.t('client_id_label') + ' ';
-          clientIdText.textContent = clientIdLabel + clientId;
-          clientInformationsDiv.classList.remove('hidden');
-
-          sessionExpiryText.textContent = new Date(msg.expiresAt).toLocaleString();
-          sessionExpiryInfromationsDiv.classList.remove('hidden');
-
-          obsControllerDiv.classList.remove('hidden');
-          joinSessionBtn.classList.add('hidden');
-          leaveSessionBtn.classList.remove('hidden');
+        } catch (err) {
+          log(clientLogsDiv, `Parsing error: ${err.message}`);
         }
-      } catch (err) {
-        log(clientLogsDiv, `Parsing error: ${err.message}`);
-      }
-    });
-
-    ws.addEventListener('close', async () => {
-      log(clientLogsDiv, 'Connection closed.');
-
-      obsControllerDiv.classList.add('hidden');
-      clientIdText.textContent = '';
-
-      await clearClientStorage();
-    });
-
-    ws.addEventListener('error', (err) => {
-      log(clientLogsDiv, `Session error: ${err.message}`);
+      },
+      onClose: async () => {
+        log(clientLogsDiv, 'Connection closed.');
+        obsControllerDiv.classList.add('hidden');
+        clientIdText.textContent = '';
+        await clearClientStorage();
+      },
+      onError: (wsInstance, err) => {
+        log(clientLogsDiv, `Session error: ${err.message}`);
+      },
     });
   } catch (err) {
     log(clientLogsDiv, `Error joining session: ${err.message}`);
   }
 }
 
-function isConnected() {
+function clientLeaveSession() {
   if (!ws || ws.readyState !== WebSocket.OPEN) {
-    return false;
+    return;
   }
-  return true;
-}
-
-function leaveSession() {
-  if (!isConnected()) return;
-
   ws.close();
   ws = null;
   log(clientLogsDiv, 'Left the session.');
@@ -328,9 +343,7 @@ function leaveSession() {
 
   sessionTokenField.disabled = false;
   sessionPasswordField.disabled = false;
-  clientInformationsDiv.classList.add('hidden');
-  sessionExpiryInfromationsDiv.classList.add('hidden');
   leaveSessionBtn.classList.add('hidden');
   joinSessionBtn.classList.remove('hidden');
 }
-//#endregion CLIENT
+//#endregion CLIENT FUNCTIONS

@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     location.href = 'obs-controller.html';
   });
 
-  joinSessionBtn.addEventListener('click', joinSession);
-  leaveSessionBtn.addEventListener('click', leaveSession);
+  joinSessionBtn.addEventListener('click', clientJoinSession);
+  leaveSessionBtn.addEventListener('click', clientLeaveSession);
 
   togglePasswordBtn.addEventListener('click', () => {
     if (sessionPasswordField.type === 'password') {

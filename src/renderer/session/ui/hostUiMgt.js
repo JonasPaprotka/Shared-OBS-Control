@@ -49,9 +49,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   setStatus(window.i18n.t('session_status_closed'), warningStatusTextColor);
 
   // buttons
-  createSessionBtn.addEventListener('click', createSession);
-  closeSessionBtn.addEventListener('click', closeSession);
-  continueSessionBtn.addEventListener('click', continueSession);
+  createSessionBtn.addEventListener('click', hostCreateSession);
+  closeSessionBtn.addEventListener('click', hostDeleteSession);
+  continueSessionBtn.addEventListener('click', hostContinueSession);
   copySessionTokenValueBtn.addEventListener('click', () => { navigator.clipboard.writeText(sessionTokenField.value) });
   copySessionPasswordValueBtn.addEventListener('click', () => { navigator.clipboard.writeText(sessionPasswordField.value) });
 
