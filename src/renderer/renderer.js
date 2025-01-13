@@ -53,10 +53,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           title: dialogTitle,
           message: dialogMessage,
           detail: dialogDetail,
-          buttons: dialogButtons
+          buttons: dialogButtons,
+          cancelId: 1
         };
         const returnValue = await window.dialogAPI.showMessageBox(dialogOpts);
-        if (returnValue.response === 1) return;
+        if (returnValue.response !== 0) return;
         hostPauseSession();
       }
     }
