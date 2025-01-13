@@ -97,11 +97,15 @@ async function loadClientSessionData() {
 
 async function inputClientSessionData({ loadedSessionToken, loadedSessionPassword, loadedClientLogs }) {
   try {
-    sessionToken = loadedSessionToken;
-    sessionPassword = loadedSessionPassword;
+    if (loadedSessionToken) {
+      sessionToken = loadedSessionToken;
+      sessionTokenField.value = sessionToken;
+    }
 
-    sessionTokenField.value = sessionToken;
-    sessionPasswordField.value = sessionPassword;
+    if (loadedSessionPassword) {
+      sessionPassword = loadedSessionPassword;
+      sessionPasswordField.value = sessionPassword;
+    }
 
     if (loadedClientLogs) {
       let allRows = '';

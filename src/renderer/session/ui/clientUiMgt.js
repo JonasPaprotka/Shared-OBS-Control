@@ -32,4 +32,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       sessionPasswordField.type = 'text'; togglePasswordBtn.textContent = await window.i18n.t('hide');
     } else { sessionPasswordField.type = 'password'; togglePasswordBtn.textContent = await window.i18n.t('show') }
   });
+
+  obsControllerBtn.addEventListener('click', () => { location.href = 'obsController.html' });
 });
